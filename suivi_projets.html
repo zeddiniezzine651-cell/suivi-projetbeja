@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>بلدية باجة - المنظومة الفنية الشاملة</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <style>
+        body { background: #f4f7fa; font-family: 'Segoe UI', sans-serif; }
+        .header-beja { background: #004080; color: white; padding: 15px; border-bottom: 5px solid #ffc107; text-align: center; margin-bottom: 20px; }
+        .project-card { background: white; border-radius: 15px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-right: 10px solid #004080; position: relative; }
+        .edit-btn { position: absolute; left: 15px; top: 15px; }
+        .info-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; text-align: center; height: 100%; }
+        .val-highlight { color: #d9534f; font-weight: bold; font-size: 1.2rem; display: block; }
+        .stat-circle { width: 75px; height: 75px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; font-weight: bold; font-size: 1.2rem; }
+        .axis-box { background: #fff; border: 1px dashed #004080; border-radius: 8px; padding: 8px; text-align: center; font-size: 0.85rem; min-height: 70px; }
+        .axis-label { font-weight: bold; color: #004080; border-bottom: 1px solid #ffc107; margin-bottom: 5px; display: block; }
+       /* الأكواد الموجودة حالياً */
+.axis-label { font-weight: bold; color: #004080; border-bottom: 1px solid #ffc107; margin-bottom: 5px; }
+
+/* الكود الجديد لإخفاء السبب */
+.reason-col { display: none !important; } 
+    </style>
+</head>
+<body>
+
+<div class="header-beja shadow">
+    <h3 class="fw-bold">بلدية باجة - متابعة المشاريع والمقاولات</h3>
+    <p id="liveDate" class="mb-0"></p>
+</div>
+
+<div class="container text-center">
+    <button class="btn btn-primary btn-lg px-5 shadow mb-4 fw-bold" onclick="showAddModal()">+ إضافة مشروع جديد</button>
+    <div id="projectsContainer"></div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered text-end">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white"><h5 id="modalMainTitle" class="modal-title w-100 fw-bold">بيانات المشروع</h5></div>
+            <div class="modal-body p-4 text-start">
+                <input type="hidden" id="editId">
+                <div class="row g-3">
+                    <div class="col-md-6 text-end"><label class="fw-bold">اسم المشروع:</label><input type="text" id="pTitle" class="form-control"></div>
+   <div class="col-md-6">
+    <label class="fw-bold text-primary">الميزانية الجملية (أ.د):</label>
+    <input type="number" id="pBudget" class="form-control" placeholder="أدخل مبلغ المشروع بالدينار...">
+</div> 
+<div class="col-md-6 text-end">
+    <label class="fw-bold text-success">✅ أذون البدء / الاستئناف:</label>
+    <textarea id="pAuthStart" class="form-control" rows="2"></textarea>
+</div>
+<div class="col-md-6 text-end">
+    <label class="fw-bold text-danger">🛑 أذون الإيقاف:</label>
+    <textarea id="pAuthStop" class="form-control" rows="2"></textarea>
+</div> 
+                    <div class="col-md-6 text-end"><label class="fw-bold">اسم المقاولة:</label><input type="text" id="pContractor" class="form-control"></div>
+                    <div class="col-md-6 text-end">
+    <label class="fw-bold">مكتب الدراسات:</label>
+    <input type="text" id="pStudyOffice" class="form-control" placeholder="اسم مكتب الدراسات">
+</div>
+
+<div class="col-md-12 text-end mt-2">
+    <label class="fw-bold">وضعية ملف الدراسات والاختبارات:</label>
+    <textarea id="pStudyStatus" class="form-control" rows="2" placeholder="مثلاً: بصدد إجراء اختبار للسياج وإعداد الملف التفصيلي"></textarea>
+</div> 
+                    <div class="col-md-4 text-end"><label class="text-primary fw-bold">مدة الإنجاز (يوم):</label><input type="number" id="pDuration" class="form-control"></div>
+                    <div class="col-md-4 text-end"><label class="fw-bold">المبلغ الإجمالي (د.ت):</label><input type="number" id="pTotal" class="form-control"></div>
+                    <div class="col-md-4 text-end"><label class="fw-bold text-success">المبلغ المدفوع (د.ت):</label><input type="number" id="pPaid" class="form-control"></div>
+                    <div class="col-md-12 text-end"><label class="fw-bold">التقدم المادي (%):</label><input type="number" id="pPhys" class="form-control"></div>
+                    <div class="col-md-4 text-end"><label class="small fw-bold">مناطق لم تبدء فيها الاشغال بعد:</label><textarea id="pWait" class="form-control" rows="2"></textarea></div>
+                    <div class="col-md-4 text-end"><label class="small fw-bold">مناطق جاري بها العمل :</label><textarea id="pWork" class="form-control" rows="2"></textarea></div>
+                    <div class="col-md-4 text-end"><label class="small fw-bold">مناطق انتهت فيها الاشغال:</label><textarea id="pDone" class="form-control" rows="2"></textarea></div>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-success w-100 fw-bold" onclick="saveProject()">حفظ البيانات</button></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="logModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered text-end">
+        <div class="modal-content">
+            <div id="logHead" class="modal-header text-white"><h5 id="logTitle" class="modal-title w-100 fw-bold"></h5></div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="targetId"><input type="hidden" id="entryType">
+                <div class="mb-3"><label>التاريخ:</label><input type="date" id="logDate" class="form-control"></div>
+                <div id="reasonDiv" class="mb-3 d-none">
+                    <label class="fw-bold text-danger">سبب التوقف:</label>
+                    <select id="logReason" class="form-select border-danger">
+                        <option value="سوء الأحوال الجوية">🌧️ سوء الأحوال الجوية</option>
+                        <option value="المقاولة لا تعمل">🏗️ المقاولة لا تعمل</option>
+                        <option value="إذن إداري">📄 إذن إداري</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-primary w-100 fw-bold" onclick="submitDay()">تأكيد</button></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // 1. استبدلي سطر تعريف المصفوفة القديم بهذا:
+let projects = [];
+
+// 2. أضيفي هذا الكود لربط البيانات بالسحاب (Firebase)
+// ملاحظة: يجب وضع إعدادات مشروعك هنا
+ const firebaseConfig = {
+    apiKey: "AIzaSyDdUO8JCrzA-eLoKrhUL7sjkiGVvhIM7_0",
+   authDomain: "beja-e2367.firebaseapp.com",
+  databaseURL: "https://beja-e2367-default-rtdb.firebaseio.com/", 
+    projectId: "beja-e2367",
+    storageBucket: "beja-e2367.firebasestorage.app",
+    messagingSenderId: "803764945677",
+    appId: "1:803764945677:web:6a464c1145adae39e66644"
+  };
+
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// 3. هذا السطر هو "السحر" الذي سيجعل البيانات تظهر في الحاسوب الثاني فوراً
+db.ref('projects').on('value', (snapshot) => {
+    const data = snapshot.val();
+    projects = [];
+    for (let id in data) {
+        projects.push({ firebaseId: id, ...data[id] });
+    }
+    render(); // استدعاء وظيفة العرض لتحديث الشاشة تلقائياً
+}); 
+
+
+    function showAddModal() {
+        document.getElementById('editId').value = '';
+        document.getElementById('modalMainTitle').innerText = "إضافة مشروع جديد";
+        document.querySelectorAll('.modal-body input, .modal-body textarea').forEach(i => i.value = '');
+        new bootstrap.Modal(document.getElementById('addModal')).show();
+    }
+
+    function editProject(id) {
+        const p = projects.find(x => x.id == id);
+        document.getElementById('editId').value = p.id;
+        document.getElementById('modalMainTitle').innerText = "تعديل بيانات المشروع";
+        document.getElementById('pTitle').value = p.name;
+        document.getElementById('pContractor').value = p.contractor;
+        document.getElementById('pDuration').value = p.duration;
+        document.getElementById('pTotal').value = p.totalCost;
+        document.getElementById('pPaid').value = p.paidAmount;
+        document.getElementById('pPhys').value = p.physRate;
+        document.getElementById('pWait').value = p.wait;
+        document.getElementById('pWork').value = p.work;
+        document.getElementById('pDone').value = p.done;
+        new bootstrap.Modal(document.getElementById('addModal')).show();
+    }
+    
+   function saveProject() {
+    const title = document.getElementById('pTitle').value;
+    const duration = parseInt(document.getElementById('pDuration').value) || 0;
+    const editId = document.getElementById('editId').value;
+
+    // 1. حساب المبالغ والنسبة المالية بدقة
+    const total = parseFloat(document.getElementById('pTotal').value) || 0;
+    const paid = parseFloat(document.getElementById('pPaid').value) || 0;
+   
+    // هذه المعادلة هي المحرك الأساسي للتقدم المالي
+    const financialRate = total > 0 ? ((paid / total) * 100).toFixed(1) : 0;
+
+  const pData = {
+        id: editId ? parseInt(editId) : Date.now(),
+        name: title,
+        budget: document.getElementById('pBudget').value || '0.000',
+        contractor: document.getElementById('pContractor').value || 'غير محدد',
+       
+        // --- إضافة مكتب الدراسات بطريقة ذكية ---
+        studyOffice: document.getElementById('pStudyOffice') ? document.getElementById('pStudyOffice').value : 'بصدد التعيين',
+        studyStatus: document.getElementById('pStudyStatus') ? document.getElementById('pStudyStatus').value : 'بصدد الاختبارات وإعداد الملف التفصيلي',
+       
+        duration: duration,
+        totalCost: total,
+        paidAmount: paid,
+        finRate: total > 0 ? ((paid / total) * 100).toFixed(1) : 0,
+        physRate: document.getElementById('pPhys').value || 0,
+        location: 'باجة',
+        authStart: document.getElementById('pAuthStart').value || '',
+        authStop: document.getElementById('pAuthStop').value || '',
+        wait: document.getElementById('pWait').value || '---',
+        work: document.getElementById('pWork').value || '---',
+        done: document.getElementById('pDone').value || '---',
+        history: editId ? projects.find(x => x.id == editId).history : []
+    }; 
+
+    if (editId) {
+        const index = projects.findIndex(x => x.id == editId);
+        projects[index] = pData;
+    } else {
+        projects.push(pData);
+    }
+
+    update();
+    bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
+} 
+    function openLog(pid, type) {
+        document.getElementById('targetId').value = pid;
+        document.getElementById('entryType').value = type;
+        document.getElementById('logDate').valueAsDate = new Date();
+        const div = document.getElementById('reasonDiv');
+        if(type === 'WORK') {
+            document.getElementById('logTitle').innerText = "تسجيل عمل";
+            document.getElementById('logHead').className = "modal-header bg-success text-white";
+            div.classList.add('d-none');
+        } else {
+            document.getElementById('logTitle').innerText = "تسجيل توقف";
+            document.getElementById('logHead').className = "modal-header bg-danger text-white";
+            div.classList.remove('d-none');
+        }
+        new bootstrap.Modal(document.getElementById('logModal')).show();
+    }
+
+    function submitDay() {
+        const p = projects.find(x => x.id == document.getElementById('targetId').value);
+        const type = document.getElementById('entryType').value;
+        p.history.push({
+            type: type,
+            date: document.getElementById('logDate').value,
+            reason: type === 'STOP' ? document.getElementById('logReason').value : 'عمل عادي'
+        });
+        update();
+        bootstrap.Modal.getInstance(document.getElementById('logModal')).hide();
+    }
+
+    function deleteEntry(pid, idx) {
+        if(confirm("هل تريد حذف هذا السجل؟")) {
+            projects.find(x => x.id == pid).history.splice(idx, 1);
+            update();
+        }
+    }
+
+    function update() {
+       function update() {
+    // إرسال البيانات إلى السحاب (Firebase) لتراها كل الحواسيب
+    firebase.database().ref('BEJA_PROJECTS').set(projects);
+    render();
+} 
+
+        render();
+    }
+
+    function render() {
+        const area = document.getElementById('projectsContainer');
+        area.innerHTML = '';
+        projects.forEach(p => {
+            const worked = p.history.filter(h => h.type === 'WORK').length; // تأكدي من وجود .length في الآخر
+const stopped = p.history.filter(h => h.type === 'STOP').length; // تأكدي من وجود .length في الآخر
+const net = p.duration - (worked + stopped); 
+            let logs = p.history.sort((a,b)=>new Date(b.date)-new Date(a.date)).map((h, index) => `
+                <tr>
+                    <td>${h.date}</td>
+                    <td><span class="badge ${h.type==='WORK'?'bg-success':'bg-danger'}">${h.type==='WORK'?'عمل':'توقف'}</span></td>
+                    <td class="reason-col">${h.reason}</td> 
+                    <td><button class="btn btn-sm p-0 text-muted" onclick="deleteEntry(${p.id}, ${index})">🗑️</button></td>
+                </tr>`).join('');
+
+            area.innerHTML += `
+                <div class="project-card text-end">
+                   <div class="float-start d-flex gap-1">
+    <button class="btn btn-sm btn-outline-danger" onclick="deleteProject(${p.id})">🗑️</button>
+    <button class="btn btn-sm btn-outline-info" onclick="printProject(${p.id})">🖨️</button>
+    <button class="btn btn-sm btn-outline-secondary" onclick="editProject(${p.id})">⚙️</button>
+</div> 
+                   
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 mt-4">
+                        <h4 class="text-primary fw-bold mb-0">${p.name}</h4>
+                        <span class="badge bg-warning text-dark px-3 py-2 ms-5" style="float: right;">
+   🏗️ المقاولة: ${p.contractor}
+</span>
+<div class="mt-1">🏠 <b>مكتب الدراسات:</b> ${p.studyOffice || '---'}</div> 
+                    </div>
+                    
+                    <div class="row g-2 mb-2">
+    <div class="col-6">
+        <div style="background:#f0fff4; border-right:4px solid #28a745; padding:5px; border-radius:4px;">
+            <div class="fw-bold text-success" style="font-size:0.7rem;">✅  البدء</div>
+            <div style="white-space:pre-wrap; font-size:0.8rem;">${p.authStart || '---'}</div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div style="background:#fff5f5; border-right:4px solid #dc3545; padding:5px; border-radius:4px;">
+            <div class="fw-bold text-danger" style="font-size:0.7rem;">🛑 الإيقاف</div>
+            <div style="white-space:pre-wrap; font-size:0.8rem;">${p.authStop || '---'}</div>
+        </div>
+    </div>
+</div> 
+à
+                    <div class="row g-2 mb-4">
+                        <div class="col-4"><div class="info-card">المدة التعاقدية <span class="val-highlight text-primary">${p.duration} يوم</span></div></div>
+                        <div class="col-4"><div class="info-card">التقدم المادي <span class="val-highlight text-orange">${p.physRate}%</span></div></div>
+                        <div class="col-4"><div class="info-card">التقدم المالي <span class="val-highlight text-success">${p.finRate}%</span></div></div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-4"><div class="axis-box"><span class="axis-label">مناطق لم يتم  فيها العمل بعد</span>${p.wait}</div></div>
+                        <div class="col-4"><div class="axis-box" style="border-color:#ffc107"><span class="axis-label">مناطق  جااري بها الاشغال  </span>${p.work}</div></div>
+                        <div class="col-4"><div class="axis-box" style="border-color:#28a745"><span class="axis-label">مناطق  انتهت فيها الاشغال </span>${p.done}</div></div>>
+                    <div class="row text-center mb-4">
+                        <div class="col-4"><div class="stat-circle bg-success">${worked}</div><small class="fw-bold">أيام العمل</small></div>
+                        <div class="col-4 border-start border-end"><div class="stat-circle bg-danger">${stopped}</div><small class="fw-bold">أيام التوقف</small></div>
+                        <div class="col-4"><div class="stat-circle bg-dark">${net}</div><small class="fw-bold">الصافي (المتبقي)</small></div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success flex-fill fw-bold py-2" onclick="openLog(${p.id}, 'WORK')">✅ تسجيل عمل</button>
+                        <button class="btn btn-danger flex-fill fw-bold py-2" onclick="openLog(${p.id}, 'STOP')">🚫 تسجيل توقف</button>
+                    </div>
+
+                    <div class="table-responsive mt-3" style="max-height:150px; border-radius:10px; border:1px solid #eee">
+                        <table class="table table-sm text-center mb-0" style="font-size:0.8rem">
+                            <th class="reason-col" onclick="toggleReasons()" style="cursor:pointer">السبب 👁️</th> 
+                            <tbody>${logs || '<tr><td colspan="4">لا سجلات</td></tr>'}</tbody>
+                        </table>
+                    </div>
+                </div>`;
+        });
+    }
+    document.getElementById('liveDate').innerText = new Date().toLocaleDateString('ar-TN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    render();
+function toggleReasons() {
+    const cols = document.querySelectorAll('.reason-col');
+    cols.forEach(col => {
+        //
+        const isHidden = window.getComputedStyle(col).display === "none";
+        col.style.setProperty("display", isHidden ? "table-cell" : "none", "important");
+    });
+}   
+function deleteProject(id) {
+    if (confirm("هل أنت متأكد من مسح هذا المشروع؟")) {
+        // حذف المشروع من القائمة
+        projects = projects.filter(p => p.id !== id);
+        // حفظ التعديل في ذاكرة المتصفح
+        localStorage.setItem('projects', JSON.stringify(projects));
+        // تحديث الشاشة فوراً
+        render();
+    }
+} 
+function printProject(id) {
+    var p = projects.find(function(x) { return x.id == id; });
+   
+    // حسابات الأيام
+    var worked = p.history ? p.history.filter(h => h.type === 'WORK').length : 0;
+    var stopped = p.history ? p.history.filter(h => h.type === 'STOP').length : 0;
+    var netDays = (p.duration || 0) - (worked + stopped);
+
+    var win = window.open('', '_blank');
+    var doc = '<html dir="rtl"><head><title>تقرير بلدية باجة</title>';
+   
+    doc += '<style>';
+    doc += 'body { font-family: "Arial", sans-serif; padding: 25px; direction: rtl; }';
+    doc += '.header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }';
+    doc += 'table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }';
+    doc += 'th, td { border: 1px solid #000; padding: 8px; text-align: right; font-size: 13px; }';
+    doc += 'th { background-color: #f2f2f2; width: 25%; font-weight: bold; }';
+    doc += '.section-header { font-weight: bold; padding: 5px; background: #eee; margin: 10px 0; border-right: 5px solid #333; }';
+    doc += '</style></head><body>';
+
+    doc += '<div class="header"><h2>الجمهورية التونسية</h2><h3>ولاية باجة - بلدية باجة</h3><h1>بطاقة متابعة فنية شاملة</h1></div>';
+
+    // أولاً: التعريف والموقع
+    doc += '<div class="section-header">أولاً: بيانات التعريف والموقع</div>';
+    doc += '<table>';
+    doc += '<tr><th>اسم المشروع</th><td colspan="3">' + (p.name || '---') + '</td></tr>';
+   
+  
+   
+    doc += '<tr><th>المدينة / المعتمدية</th><td>' + (p.city || 'باجة') + '</td><th>المقاول</th><td>' + (p.contractor || '---') + '</td></tr>';
+    doc += '</table>';
+// كود جدول مكتب الدراسات للطباعة
+doc += '<div class="section-header">مكتب الدراسات الفنية</div>';
+doc += '<table>';
+doc += '<tr><th style="width:30%;">مكتب الدراسات</th><td>' + (p.studyOffice || '---') + '</td></tr>';
+doc += '<tr><th>وضعية ملف الدراسات</th><td>' + (p.studyStatus || 'بصدد الاختبارات') + '</td></tr>';
+doc += '</table>'; 
+    // ثانياً: المعطيات المالية (حل مشكلة الميزانية والتقدم)
+    doc += '<div class="section-header">ثانياً: المعطيات المالية ونسبة التقدم</div>';
+    doc += '<table>';
+   
+    // كاشف الميزانية: يبحث عن budget أو أي رقم مدخل
+  // 1. تعديل السطر 336 ليقرأ الميزانية بشكل صحيح
+var budgetVal = p.budget || p.totalCost || "0.000";
+
+// 2. تعديل السطر 338 ليقرأ نسبة التقدم المالي التي حسبناها
+var progressVal = p.finRate || "0"; 
+    doc += '<tr><th>الميزانية </th><td>' + budgetVal + ' أ.د</td><th>التقدم المالي</th><td>' + progressVal + ' %</td></tr>';
+    doc += '</table>';
+
+    // ثالثاً: الجدول الزمني
+    doc += '<div class="section-header">ثالثاً: الجدول الزمني والأذون الإدارية</div>';
+    doc += '<table>';
+    doc += '<tr><th>مدة الإنجاز</th><td>' + (p.duration || '0') + ' يوم</td><th>إذن بداية الأشغال</th><td>' + (p.authStart || '---') + '</td></tr>';
+    doc += '<tr><th>أيام العمل الفعلية</th><td>' + worked + ' يوم</td><th>أيام التوقف</th><td>' + stopped + ' يوم</td></tr>';
+   doc += '<tr><th>أذون إيقاف الأشغال</th><td colspan="3">' + (p.authStop || '---') + '</td></tr>'; 
+    doc += '<tr style="color:red; font-weight:bold;"><th>الرصيد الصافي المتبقي</th><td colspan="3">' + netDays + ' يوم</td></tr>';
+    doc += '</table>';
+// إضافة المحاور الثلاثة بالعناوين والأرقام بعد جدول المعطيات المالية
+    doc += '<div class="section-header">ثالثاً: محاور الإنجاز والتدخل</div>';
+    doc += '<table>';
+    doc += '<tr><th>مناطق لم يتم البدء  فيها </th><th>مناطق  بصدد الإنجاز</th><th>مناطق  انتهت فيها الاشغال </th></tr>';
+    doc += '<tr>';
+    doc += '<td>' + (p.wait || '---') + '</td>';
+    doc += '<td>' + (p.work || '---') + '</td>';
+    doc += '<td>' + (p.done || '---') + '</td>';
+    doc += '</tr>';
+    doc += '</table>'; 
+    // رابعاً: السجل التاريخي
+    if (p.history && p.history.length > 0) {
+        doc += '<div class="section-header">رابعاً: سجل الأذون والحركات التفصيلي</div>';
+        doc += '<table><thead><tr><th>التاريخ</th><th>نوع الإذن</th><th>الملاحظات</th></tr></thead><tbody>';
+        p.history.forEach(function(h) {
+            doc += '<tr><td>' + h.date + '</td><td>' + (h.type === 'WORK' ? ' عمل' : ' توقف') + '</td><td>' + (h.reason || '---') + '</td></tr>';
+        });
+        doc += '</tbody></table>';
+    }
+
+    doc += '<div style="margin-top:30px; display:flex; justify-content:space-between;"><span>استخراج في: ' + new Date().toLocaleDateString('ar-TN') + '</span><span>ختم المصالح الفنية</span></div>';
+doc += '<\/body><\/html>'; 
+
+    win.document.write(doc);
+    win.document.close();
+} 
+</script>
+</body>
+</html> 
