@@ -1,84 +1,129 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>بلدية باجة - متابعة المشاريع</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><style>
-:root{--main-blue:#003366;--soft-bg:#f8f9fa} body{background-color:var(--soft-bg);font-family:'Segoe UI',Arial,sans-serif;font-size:13px}
-.header-section{background:white;border-bottom:3px solid var(--main-blue);padding:20px;margin-bottom:20px;border-radius:0 0 15px 15px;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
-.card{border:none;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);margin-bottom:20px} .card-header{background:var(--main-blue);color:white;font-weight:bold;border-radius:12px 12px 0 0 !important;padding:12px}
-.form-label{font-weight:600;color:#444;font-size:12px} .table{background:white;border-radius:8px;overflow:hidden}
-.table thead{background:#eff3f6;color:var(--main-blue)} .table th{border-bottom:2px solid #dee2e6;padding:12px;font-size:11px}
-.status-badge{padding:4px 8px;border-radius:20px;font-size:11px;font-weight:bold} .net-value{background:#fff3cd;color:#856404;padding:3px 6px;border-radius:4px}
-@media print{ .no-print{display:none !important} body{background:white;padding:0} .card{box-shadow:none;border:1px solid #eee} .table th{background:#f0f0f0 !important;color:black !important;border:1px solid #000 !important} .table td{border:1px solid #000 !important} .print-header{display:block !important;text-align:center;margin-bottom:20px} }
-.print-header{display:none}
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>منظومة متابعة المشاريع - بلدية باجة</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    :root { --primary-color: #004085; --accent-color: #f8f9fa; }
+    body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .main-card { border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: none; margin-top: 20px; }
+    .header-top { background: var(--primary-color); color: white; padding: 25px; border-radius: 15px 15px 0 0; text-align: center; }
+    .status-working { background-color: #d4edda; color: #155724; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+    .status-stopped { background-color: #f8d7da; color: #721c24; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+    .table thead { background: #e9ecef; color: var(--primary-color); }
+    .note-cell { max-width: 150px; font-size: 0.85rem; color: #666; }
+   
+    @media print {
+        .no-print { display: none !important; }
+        body { background: white; }
+        .main-card { box-shadow: none; border: 1px solid #ccc; }
+        .table th { background-color: #eee !important; color: black !important; }
+        .print-only-header { display: block !important; text-align: center; border-bottom: 2px solid black; margin-bottom: 20px; }
+    }
+    .print-only-header { display: none; }
 </style></head><body>
 
-<div class="container-fluid">
-    <div class="print-header">
-        <h3>الجمهورية التونسية</h3>
-        <h4>بلدية باجة - المصلحة الفنية</h4>
-        <hr>
-        <h5>كشف دوري لمتابعة المشاريع العمومية</h5>
+<div class="container-fluid py-4">
+    <div class="print-only-header">
+        <h2>الجمهورية التونسية</h2>
+        <h3>وزارة الشؤون المحلية - بلدية باجة</h3>
+        <p>تقرير متابعة المشاريع الفنية - كشف الحساب اليومي والشهري</p>
     </div>
 
-    <div class="header-section d-flex justify-content-between align-items-center no-print">
-        <div><h4 class="mb-0 text-primary">🏛️ منظومة المشاريع الكبرى</h4><small class="text-muted">بلدية باجة - متابعة الإنجاز والسيولة</small></div>
-        <button onclick="window.print()" class="btn btn-dark btn-sm shadow-sm">🖨️ طباعة التقرير الفني</button>
+    <div class="card main-card">
+        <div class="header-top no-print">
+            <h2 class="mb-0">🏛️ المصلحة الفنية - منظومة المتابعة اليومية</h2>
+            <p class="mt-2 opacity-75">إدارة المشاريع، التوقفات، والتقارير الشهرية</p>
+            <button onclick="window.print()" class="btn btn-light btn-sm mt-2 shadow-sm">🖨️ طباعة تقرير احترافي</button>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3 no-print mb-4 p-3 border rounded bg-light">
+                <div class="col-md-3"><label>اسم المشروع</label><input type="text" id="n" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label>الميزانية (د.ت)</label><input type="number" id="tot" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label>مدة الإنجاز</label><input type="number" id="dur" class="form-control form-control-sm"></div>
+                <div class="col-md-3"><label>المقاولة</label><input type="text" id="c" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label>ملاحظات فنية</label><input type="text" id="note" class="form-control form-control-sm" placeholder="أدخل أي ملاحظات..."></div>
+               
+                <div class="col-md-12 d-flex justify-content-between align-items-end mt-3 border-top pt-3">
+                    <div class="d-flex gap-2">
+                        <button onclick="save('working')" class="btn btn-success px-4">✅ تسجيل يوم عمل</button>
+                        <button onclick="save('stopped')" class="btn btn-danger px-4">🛑 تسجيل توقف</button>
+                    </div>
+                    <small class="text-muted">الحساب يتم آلياً بناءً على الحالة المسجلة اليوم</small>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle text-center">
+                    <thead>
+                        <tr>
+                            <th>المشروع / المقاول</th>
+                            <th>الميزانية</th>
+                            <th>مدة الإنجاز</th>
+                            <th>توقفات الشهر</th>
+                            <th>الحالة اليومية</th>
+                            <th>أسباب التوقف / الملاحظات</th>
+                            <th class="no-print">إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <div class="card no-print"><div class="card-header">📋 إدخال بيانات العملية</div><div class="card-body bg-light"><div class="row g-3">
-        <div class="col-md-4"><label class="form-label">اسم المشروع</label><input type="text" id="n" class="form-control"></div>
-        <div class="col-md-4"><label class="form-label">المقاولة</label><input type="text" id="c" class="form-control"></div>
-        <div class="col-md-4"><label class="form-label">مكتب الدراسات</label><input type="text" id="st" class="form-control"></div>
-        <div class="col-md-2"><label class="form-label">المدة (يوم)</label><input type="number" id="dur" class="form-control"></div>
-        <div class="col-md-3"><label class="form-label">إذن بدء/استئناف</label><input type="text" id="os" class="form-control"></div>
-        <div class="col-md-2"><label class="form-label">التكلفة (د.ت)</label><input type="number" id="tot" class="form-control"></div>
-        <div class="col-md-2"><label class="form-label">المدفوع (د.ت)</label><input type="number" id="paid" class="form-control"></div>
-        <div class="col-md-3"><label class="form-label">التقدم المادي %</label><input type="number" id="prog_m" class="form-control"></div>
-        <div class="col-md-12 border-top mt-3 pt-2"><span class="badge bg-secondary">جدول التوقفات (أيام)</span></div>
-        <div class="col-md-4"><label class="form-label">توقف (بلدية)</label><input type="number" id="p_mun" class="form-control" value="0"></div>
-        <div class="col-md-4"><label class="form-label">أحوال جوية</label><input type="number" id="p_wea" class="form-control" value="0"></div>
-        <div class="col-md-4"><label class="form-label">مسؤولية المقاول</label><input type="number" id="p_con" class="form-control" value="0"></div>
-        <div class="col-12 text-center mt-3 border-top pt-3"><button onclick="save()" class="btn btn-primary px-5 fw-bold shadow">حفظ البيانات ومعالجتها</button></div>
-    </div></div></div>
-
-    <div class="card"><div class="table-responsive"><table class="table table-bordered text-center align-middle mb-0">
-        <thead>
-            <tr>
-                <th rowspan="2">المشروع والمشاركين</th><th rowspan="2">المدة / الأذون</th><th colspan="3">الوضعية المالية (د.ت)</th><th colspan="2">التقدم %</th><th colspan="4">أيام التوقف</th><th rowspan="2" class="no-print">تحكم</th>
-            </tr><tr>
-                <th>التكلفة</th><th>المدفوع</th><th>المتبقي</th><th>مالي</th><th>مادي</th><th>بلدية</th><th>جو</th><th>مقاول</th><th>الصافي</th>
-            </tr>
-        </thead><tbody id="list"></tbody>
-    </table></div></div>
 </div>
 
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import{getDatabase,ref,onValue,push,remove}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-const config={databaseURL:"https://suivi-projets-4817b-default-rtdb.firebaseio.com/"};
-const app=initializeApp(config);const db=getDatabase(app);const r=ref(db,'projects_v3');
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-onValue(r,(snap)=>{
-const d=snap.val();const l=document.getElementById('list');l.innerHTML='';
-if(d){Object.keys(d).forEach(k=>{const p=d[k];
-const rem=(p.tot-p.paid).toFixed(3); const per_f=p.tot>0?((p.paid/p.tot)*100).toFixed(1):0;
-const net_days=p.dur-p.p_con;
+const config = { databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" };
+const app = initializeApp(config); const db = getDatabase(app); const r = ref(db, 'projets_v4');
 
-l.insertAdjacentHTML('afterbegin',`<tr>
-<td class="text-end"><b>${p.name}</b><br><small class="text-muted">${p.c} | ${p.st}</small></td>
-<td><small>${p.dur} يوم<br>OS: ${p.os}</small></td>
-<td>${p.tot}</td><td>${p.paid}</td><td class="text-danger fw-bold">${rem}</td>
-<td><span class="status-badge bg-light text-dark border">${per_f}%</span></td><td><span class="status-badge bg-primary text-white">${p.prog_m}%</span></td>
-<td>${p.p_mun}</td><td>${p.p_wea}</td><td>${p.p_con}</td><td><b class="net-value">${net_days}</b></td>
-<td class="no-print"><button onclick="del('${k}')" class="btn btn-sm text-danger">حذف</button></td></tr>`)});}
-else{l.innerHTML='<tr><td colspan="12">لا توجد بيانات حالياً</td></tr>'}},(e)=>alert(e.message));
+onValue(r, (snap) => {
+    const d = snap.val(); const l = document.getElementById('list'); l.innerHTML = '';
+    if (d) {
+        Object.keys(d).forEach(k => {
+            const p = d[k];
+            const statusClass = p.status === 'working' ? 'status-working' : 'status-stopped';
+            const statusText = p.status === 'working' ? 'قيد العمل' : 'متوقف حالياً';
+           
+            l.insertAdjacentHTML('afterbegin', `
+                <tr>
+                    <td class="text-end"><b>${p.name}</b><br><small>${p.c}</small></td>
+                    <td>${p.tot} د.ت</td>
+                    <td>${p.dur} يوم</td>
+                    <td><span class="badge bg-dark">${p.stops_count || 0} أيام</span></td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
+                    <td class="note-cell">${p.note || '-'}</td>
+                    <td class="no-print"><button onclick="del('${k}')" class="btn btn-sm btn-outline-danger">حذف</button></td>
+                </tr>
+            `);
+        });
+    } else { l.innerHTML = '<tr><td colspan="7">لا توجد سجلات حالياً</td></tr>'; }
+});
 
-window.save=function(){
-const pData={
-name:document.getElementById('n').value, c:document.getElementById('c').value, st:document.getElementById('st').value,
-dur:Number(document.getElementById('dur').value), os:document.getElementById('os').value,
-tot:Number(document.getElementById('tot').value), paid:Number(document.getElementById('paid').value),
-prog_m:Number(document.getElementById('prog_m').value), p_mun:Number(document.getElementById('p_mun').value),
-p_wea:Number(document.getElementById('p_wea').value), p_con:Number(document.getElementById('p_con').value)
+window.save = function(statusType) {
+    const name = document.getElementById('n').value;
+    const dur = Number(document.getElementById('dur').value);
+    const note = document.getElementById('note').value;
+   
+    if(!name) { alert("أدخل اسم المشروع أولاً"); return; }
+
+    const pData = {
+        name: name,
+        tot: document.getElementById('tot').value,
+        dur: dur,
+        c: document.getElementById('c').value,
+        note: note,
+        status: statusType,
+        stops_count: statusType === 'stopped' ? 1 : 0, // يبدأ الحساب من أول تسجيل
+        date: new Date().toLocaleDateString()
+    };
+
+    push(r, pData).then(() => {
+        alert("تم تسجيل الحالة بنجاح");
+        document.getElementById('note').value = '';
+    });
 };
-if(!pData.name){alert("الرجاء إدخال اسم المشروع");return;}
-push(r,pData).then(()=>{alert("تم الحفظ بنجاح"); document.querySelectorAll('input').forEach(i=>i.value='')});};
-window.del=function(k){if(confirm("حذف المشروع؟")){remove(ref(db,'projects_v3/'+k));}};
+
+window.del = function(k) { if(confirm("حذف هذا السجل؟")) remove(ref(db, 'projets_v4/' + k)); };
 </script></body></html> 
