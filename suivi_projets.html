@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>بلدية باجة - متابعة المشاريع</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body { background-color: #f4f7f6; font-family: sans-serif; padding: 15px; }
+
+        .main-card { border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); background: white; padding: 20px; border-top: 5px solid #004a99; }
+
+        .beja-header { color: #004a99; margin-bottom: 25px; font-weight: bold; }
+
+        .table-custom thead { background-color: #004a99; color: white; }
+
+        @media print { .no-print { display: none; } }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="container main-card">
+
+    <div class="text-center">
+
+        <h2 class="beja-header">بلدية باجة <br> <small class="text-muted fs-5">منظومة متابعة المشاريع العمومية</small></h2>
+
+    </div>
+
+
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle text-center shadow-sm">
+
+            <thead class="table-custom">
+
+                <tr>
+
+                    <th>المشروع</th>
+
+                    <th>الميزانية</th>
+
+                    <th>المقاول</th>
+
+                    <th>الوضعية</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="display-table">
+
+                <tr><td colspan="4" class="py-5 text-muted">جاري الاتصال بالسحابة...</td></tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <div class="text-center mt-4 no-print">
+
+        <button class="btn btn-dark btn-lg px-5" onclick="window.print()">🖨️ طباعة التقرير</button>
+
+    </div>
+
+</div>
+
+
+
+<script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+
+
+    const firebaseConfig = {
+
+        databaseURL: "https://suivi
+
+Gemini a dit
+يبدو أنك تقوم ببناء واجهة برمجية لبلدية باجة لمتابعة المشاريع باستخدام Firebase Realtime Database. الكود الذي قدمته يتوقف عند إعدادات الاتصال (Config).
+
+إليك التكملة المنطقية والكاملة للكود لضمان جلب البيانات من السحابة وعرضها في الجدول بشكل ديناميكي، مع إضافة لمسة جمالية لحالات المشاريع:
+
+JavaScript
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // إعدادات Firebase الخاصة بك
+    const firebaseConfig = {
+        databaseURL: "https://suivi-projets-beja.firebaseio.com" // تأكد من وضع الرابط الصحيح هنا
+    };
+
+    // تهيئة التطبيق
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const projectsRef = ref(db, 'projects'); // يفترض أن البيانات مخزنة تحت عقدة باسم projects
+
+    const tableBody = document.getElementById('display-table');
+
+    // جلب البيانات وتحديثها تلقائياً
+    onValue(projectsRef, (snapshot) => {
+        const data = snapshot.val();
+        tableBody.innerHTML = ""; // مسح رسالة "جاري الاتصال"
+
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const project = data[key];
+                
+                // تحديد لون الحالة (اختياري لتحسين المظهر)
+                let statusBadge = '';
+                if(project.status === "مكتمل") statusBadge = 'bg-success';
+                else if(project.status === "قيد الإنجاز") statusBadge = 'bg-warning text-dark';
+                else statusBadge = 'bg-secondary';
+
+                const row = `
+                    <tr>
+                        <td class="fw-bold">${project.name || '---'}</td>
+                        <td class="text-primary">${project.budget || '0'} د.ت</td>
+                        <td>${project.contractor || '---'}</td>
+                        <td><span class="badge ${statusBadge}">${project.status || '---'}</span></td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="4" class="py-5 text-muted">لا توجد مشاريع مسجلة حالياً.</td></tr>';
+        }
+    }, (error) => {
+        console.error("خطأ في جلب البيانات:", error);
+        tableBody.innerHTML = '<tr><td colspan="4" class="py-5 text-danger">حدث خطأ أثناء الاتصال بقاعدة البيانات.</td></tr>';
+    });
+</script>
+ملاحظات هامة لتشغيل الكود بنجاح:
+هيكلة البيانات: الكود أعلاه يفترض أن قاعدة البيانات لديك مرتبة كالتالي:
+
+projects
+
+ID_1: { "name": "تعبيد طرقات", "budget": "500,000", "contractor": "شركة س", "status": "قيد الإنجاز" }
+
+قواعد الحماية (Rules): تأكد من إعدادات الحماية في Firebase Console (Realtime Database -> Rules) لتسمح بالقراءة العامة إذا كان التطبيق موجهاً للعموم:
+
+JSON
+{
+  "rules": {
+    ".read": true,
+    ".write": false
+  }
+}
+Bootstrap: لقد استخدمتُ في الكود badges لتلوين وضعية المشروع (أخضر للمكتمل، أصفر للقيد الإنجاز) لتعطي مظهراً احترافياً لتقرير البلدية.
+
+هل ترغب في إضافة خاصية البحث بالاسم أو تصفية المشاريع حسب الحالة؟
+
+Gemini a dit
+ممتاز، الصورة التي أرفقتها كشفت لي رابط قاعدة البيانات الصحيح الخاص بك وهو:
+https://suivi-projets-4817b-default-rtdb.firebaseio.com
+
+بناءً على هذا الرابط وبنية الكود الظاهرة في الصورة، إليك الكود الكامل والجاهز للعمل مباشرة. قمت بإصلاح الأخطاء البسيطة في ترتيب الوسوم وإضافة منطق جلب البيانات (Logic) ليظهر في الجدول:
+
+HTML
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بلدية باجة - متابعة المشاريع</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 15px; }
+        .main-card { border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); background: white; padding: 20px; border-top: 5px solid #004a99; margin-top: 20px; }
+        .beja-header { color: #004a99; margin-bottom: 25px; font-weight: bold; }
+        .table-custom thead { background-color: #004a99; color: white; }
+        .badge-status { font-size: 0.9rem; padding: 8px 12px; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container main-card">
+    <div class="text-center">
+        <h2 class="beja-header">بلدية باجة <br> <small class="text-muted fs-5">منظومة متابعة المشاريع العمومية</small></h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center shadow-sm">
+            <thead class="table-custom">
+                <tr>
+                    <th>المشروع</th>
+                    <th>الميزانية</th>
+                    <th>المقاول</th>
+                    <th>الوضعية</th>
+                </tr>
+            </thead>
+            <tbody id="display-table">
+                <tr><td colspan="4" class="py-5 text-muted">جاري الاتصال بالسحابة...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4 no-print">
+        <button class="btn btn-dark btn-lg px-5" onclick="window.print()">🖨️ طباعة التقرير</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // الإعدادات من واقع الصورة التي أرفقتها
+    const firebaseConfig = {
+        databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const projectsRef = ref(db, 'projects');
+    const tableBody = document.getElementById('display-table');
+
+    // الاستماع للبيانات وعرضها
+    onValue(projectsRef, (snapshot) => {
+        const data = snapshot.val();
+        tableBody.innerHTML = ""; 
+
+        if (data) {
+            // تحويل الكائن إلى مصفوفة ومعالجته
+            Object.keys(data).forEach(key => {
+                const project = data[key];
+                
+                // تحديد لون الحالة بناءً على النص
+                let statusClass = "bg-secondary";
+                if (project.status === "مكتمل") statusClass = "bg-success";
+                if (project.status === "قيد الإنجاز") statusClass = "bg-warning text-dark";
+                if (project.status === "متوقف") statusClass = "bg-danger";
+
+                const row = `
+                    <tr>
+                        <td class="fw-bold">${project.name || 'غير معرف'}</td>
+                        <td class="text-primary fw-bold">${project.budget || '0'} د.ت</td>
+                        <td>${project.contractor || '---'}</td>
+                        <td><span class="badge rounded-pill ${statusClass} badge-status">${project.status || 'غير محدد'}</span></td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="4" class="py-5 text-muted">لا توجد مشاريع مسجلة في قاعدة البيانات حالياً.</td></tr>';
+        }
+    }, (error) => {
+        tableBody.innerHTML = `<tr><td colspan="4" class="py-5 text-danger">خطأ في الاتصال: ${error.message}</td></tr>`;
+    });
+</script>
+
+</body>
+</html>
+ما الذي تم إصلاحه وتطويره؟
+رابط الـ Database: قمت بتصحيح الرابط ليتطابق تماماً مع الصورة (4817b).
+
+التنسيق البصري: أضفت badges ملونة للحالات (أخضر للمكتمل، أصفر للقيد التنفيذ) لتعطي طابعاً رسمياً واحترافياً لتقارير البلدية.
+
+معالجة الأخطاء: الكود الآن يظهر رسالة تنبيه إذا فشل الاتصال أو إذا كانت قاعدة البيانات فارغة.
+
+دعم الطباعة: زر الطباعة يعمل الآن بشكل صحيح ويخفي نفسه عند طباعة الورقة ليظهر التقرير نظيفاً.
+
+نصيحة: تأكد أن البيانات في Firebase مخزنة تحت اسم projects وبداخلها الحقول بنفس الأسماء (name, budget, contractor, status). هل تحتاج لمساعدتي في كيفية إدخال البيانات إلى Firebase أيضاً؟
+
+Gemini a dit
+هذا الخطأ شائع جداً في GitHub ويحدث عندما تحاول حفظ (Commit) تعديلاتك بينما قام شخص آخر (أو أنت من جهاز أو متصفح آخر) بتحديث الملف قبل أن تضغط على زر الحفظ. باختصار: النسخة التي تعدلها الآن أصبحت "قديمة" مقارنة بما هو موجود على السيرفر.
+
+إليك الحل السريع والآمن لتجاوز هذه المشكلة دون فقدان كودك:
+
+1. الخطوة الأهم: انسخ كودك الجديد
+قبل فعل أي شيء، قم بتحديد كل الكود الذي كتبته في المتصفح الآن وانسخه (Ctrl+A ثم Ctrl+C) واحفظه في ملف نصي خارجي (مثل Notepad) مؤقتاً لضمان عدم ضياعه.
+
+2. تحديث الصفحة (Refresh)
+قم بتحديث صفحة المتصفح. سيؤدي هذا إلى تحميل النسخة الأخيرة التي يشتكي GitHub منها.
+
+3. أعد لصق الكود
+اضغط على أيقونة القلم (Edit) مرة أخرى في GitHub.
+
+قم بحذف الكود القديم تماماً.
+
+الصق الكود الذي نسخته في الخطوة الأولى.
+
+4. حفظ التغييرات (Commit)
+الآن اضغط على Commit changes وستعمل العملية بنجاح لأنك أصبحت تعدل على آخر نسخة موجودة بالفعل.
+
+لماذا حدث هذا؟
+قد تكون فتحت نافذتين للمتصفح لنفس الملف.
+
+أو قمت بعمل تعديل سريع من الهاتف ثم حاولت التعديل من الحاسوب.
+
+يسمي المبرمجون هذه الحالة "Out of sync"، وهي وسيلة حماية من GitHub لمنع مسح تعديلات حديثة عن طريق الخطأ.
+
+هل واجهت مشكلة في عملية اللصق أو لا يزال الخطأ يظهر؟
+
+Vous avez dit
+هل صحيخ
+
+Gemini a dit
+لا، هناك مشكلة واضحة في سجل التعديلات (Commits) كما تظهر في الصورة:
+
+لقد قمت بـ حذف الملف عن طريق الخطأ! السجل يظهر عملية "Delete suivi_projets.html" منذ 5 دقائق، وهذا يعني أن الملف لم يعد موجوداً في المستودع (Repository) الخاص بك الآن.
+
+كيف تصحح الوضع؟
+يجب عليك إعادة إنشاء الملف من جديد باتباع هذه الخطوات البسيطة:
+
+اذهب إلى الصفحة الرئيسية للمستودع (المكان الذي تظهر فيه قائمة الملفات).
+
+اضغط على زر Add file ثم اختر Create new file.
+
+في خانة اسم الملف، اكتب بدقة: suivi_projets.html.
+
+في خانة الكود، الصق الكود البرمجي الكامل الذي أرسلته لك في ردي السابق (الذي يحتوي على إعدادات Firebase والجدول).
+
+انزل لأسفل واضغط على Commit changes.
+
+نصيحة إضافية:
+بما أنك قمت بتحديث ملف README.md أيضاً منذ 3 دقائق، تأكد دائماً أنك تضغط على الملف الذي تود تعديله أولاً، ثم تضغط على أيقونة القلم (تعديل) أو السلة (حذف). يبدو أنك ضغطت على أيقونة السلة للملف الأساسي بدلاً من تعديله.
+
+أعد إنشاء الملف الآن وسيعود كل شيء للعمل بشكل صحيح! هل تحتاج كود النسخة الأخيرة مرة أخرى؟
+
+Vous avez dit
+اين
+
+Gemini a dit
+بناءً على الصورة الأخيرة، أنت الآن في الصفحة الرئيسية (Home) لتطبيق GitHub على الهاتف. للوصول إلى الملف المفقود وإصلاحه، اتبع المسار التالي:
+
+اضغط على اسم المستودع الذي كنت تعمل عليه منذ قليل (غالباً هو beja أو suivi-projetbeja).
+
+بمجرد الدخول، ستجد قائمة بالملفات الموجودة حالياً (قد تجد فقط README.md).
+
+اضغط على الزر الذي يحمل علامة (+) أو Add file.
+
+اختر Create new file.
+
+قم بتسمية الملف: suivi_projets.html.
+
+الصق الكود الذي أعددناه لك بالأسفل.
+
+الكود البرمجي الذي يجب لصقه:
+HTML
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بلدية باجة - متابعة المشاريع</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; font-family: sans-serif; padding: 15px; }
+        .main-card { border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); background: white; padding: 20px; border-top: 5px solid #004a99; margin-top: 20px; }
+        .beja-header { color: #004a99; margin-bottom: 25px; font-weight: bold; }
+        .table-custom thead { background-color: #004a99; color: white; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container main-card">
+    <div class="text-center">
+        <h2 class="beja-header">بلدية باجة <br> <small class="text-muted fs-5">منظومة متابعة المشاريع العمومية</small></h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center shadow-sm">
+            <thead class="table-custom">
+                <tr>
+                    <th>المشروع</th>
+                    <th>الميزانية</th>
+                    <th>المقاول</th>
+                    <th>الوضعية</th>
+                </tr>
+            </thead>
+            <tbody id="display-table">
+                <tr><td colspan="4" class="py-5 text-muted">جاري الاتصال بالسحابة...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4 no-print">
+        <button class="btn btn-dark btn-lg px-5" onclick="window.print()">🖨️ طباعة التقرير</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const projectsRef = ref(db, 'projects');
+    const tableBody = document.getElementById('display-table');
+
+    onValue(projectsRef, (snapshot) => {
+        const data = snapshot.val();
+        tableBody.innerHTML = ""; 
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const project = data[key];
+                const row = `
+                    <tr>
+                        <td class="fw-bold">${project.name || '---'}</td>
+                        <td class="text-primary">${project.budget || '0'} د.ت</td>
+                        <td>${project.contractor || '---'}</td>
+                        <td><span class="badge bg-primary">${project.status || '---'}</span></td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="4" class="py-5 text-muted">لا توجد بيانات حالياً.</td></tr>';
+        }
+    });
+</script>
+</body>
+</html>
+بعد اللصق، اضغط على Commit changes ليصبح الملف جاهزاً. هل واجهت صعوبة في إيجاد زر الإضافة؟
+
+Gemini a dit
+أنت الآن في المكان الصحيح داخل المستودع (beja-projets)، ولكن كما توقعنا، الملف الوحيد الموجود هو README.md وملف المشروع محذوف.
+
+لإعادة الملف، اتبع هذه الخطوات بالترتيب على شاشة هاتفك:
+
+اضغط على النقاط الثلاث (...) الموجودة بجانب زر "Code" الأخضر.
+
+ستظهر لك قائمة، اختر منها Create new file.
+
+في خانة "اسم الملف" (File name)، اكتب:
+suivi_projets.html
+
+في المساحة الكبيرة المخصصة للكتابة، قم بلصق الكود التالي (تأكد من نسخه كاملاً):
+
+HTML
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بلدية باجة - متابعة المشاريع</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; font-family: sans-serif; padding: 15px; }
+        .main-card { border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); background: white; padding: 20px; border-top: 5px solid #004a99; margin-top: 20px; }
+        .beja-header { color: #004a99; margin-bottom: 25px; font-weight: bold; }
+        .table-custom thead { background-color: #004a99; color: white; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container main-card">
+    <div class="text-center">
+        <h2 class="beja-header">بلدية باجة <br> <small class="text-muted fs-5">منظومة متابعة المشاريع العمومية</small></h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center shadow-sm">
+            <thead class="table-custom">
+                <tr>
+                    <th>المشروع</th>
+                    <th>الميزانية</th>
+                    <th>المقاول</th>
+                    <th>الوضعية</th>
+                </tr>
+            </thead>
+            <tbody id="display-table">
+                <tr><td colspan="4" class="py-5 text-muted">جاري الاتصال بالسحابة...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4 no-print">
+        <button class="btn btn-dark btn-lg px-5" onclick="window.print()">🖨️ طباعة التقرير</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const projectsRef = ref(db, 'projects');
+    const tableBody = document.getElementById('display-table');
+
+    onValue(projectsRef, (snapshot) => {
+        const data = snapshot.val();
+        tableBody.innerHTML = ""; 
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const project = data[key];
+                const row = `
+                    <tr>
+                        <td class="fw-bold">${project.name || '---'}</td>
+                        <td class="text-primary">${project.budget || '0'} د.ت</td>
+                        <td>${project.contractor || '---'}</td>
+                        <td><span class="badge bg-primary">${project.status || '---'}</span></td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="4" class="py-5 text-muted">لا توجد بيانات حالياً.</td></tr>';
+        }
+    });
+</script>
+</body>
+</html
