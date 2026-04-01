@@ -1,84 +1,133 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>بلدية باجة - متابعة المشاريع</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><style>
-:root{--main-blue:#003366;--soft-bg:#f8f9fa} body{background-color:var(--soft-bg);font-family:'Segoe UI',Arial,sans-serif;font-size:13px}
-.header-section{background:white;border-bottom:3px solid var(--main-blue);padding:20px;margin-bottom:20px;border-radius:0 0 15px 15px;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
-.card{border:none;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);margin-bottom:20px} .card-header{background:var(--main-blue);color:white;font-weight:bold;border-radius:12px 12px 0 0 !important;padding:12px}
-.form-label{font-weight:600;color:#444;font-size:12px} .table{background:white;border-radius:8px;overflow:hidden}
-.table thead{background:#eff3f6;color:var(--main-blue)} .table th{border-bottom:2px solid #dee2e6;padding:12px;font-size:11px}
-.status-badge{padding:4px 8px;border-radius:20px;font-size:11px;font-weight:bold} .net-value{background:#fff3cd;color:#856404;padding:3px 6px;border-radius:4px}
-@media print{ .no-print{display:none !important} body{background:white;padding:0} .card{box-shadow:none;border:1px solid #eee} .table th{background:#f0f0f0 !important;color:black !important;border:1px solid #000 !important} .table td{border:1px solid #000 !important} .print-header{display:block !important;text-align:center;margin-bottom:20px} }
-.print-header{display:none}
-</style></head><body>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام متابعة مشاريع بلدية باجة</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; font-size: 13px; }
+        .container { max-width: 1300px; margin-top: 20px; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header-section { border-bottom: 3px solid #0056b3; margin-bottom: 20px; padding-bottom: 10px; }
+        th { background-color: #e9ecef !important; text-align: center; border: 1px solid #000 !important; }
+        td { border: 1px solid #000 !important; vertical-align: middle; }
+        .form-label { font-weight: bold; margin-bottom: 2px; font-size: 12px; }
+        .btn-save { background-color: #0056b3; color: white; font-weight: bold; }
+        @media print { .no-print { display: none !important; } .container { width: 100% !important; max-width: none !important; box-shadow: none !important; margin: 0; } }
+    </style>
+</head>
+<body>
 
-<div class="container-fluid">
-    <div class="print-header">
-        <h3>الجمهورية التونسية</h3>
-        <h4>بلدية باجة - المصلحة الفنية</h4>
-        <hr>
-        <h5>كشف دوري لمتابعة المشاريع العمومية</h5>
+<div class="container">
+    <div class="header-section d-flex justify-content-between align-items-center">
+        <div class="text-center"><h6>الجمهورية التونسية</h6><h6>بلدية باجة - المصلحة الفنية</h6></div>
+        <h4 class="text-primary">متابعة حضائر الأشغال الجارية</h4>
+        <button onclick="window.print()" class="btn btn-outline-dark no-print">🖨️ طباعة التقرير</button>
     </div>
 
-    <div class="header-section d-flex justify-content-between align-items-center no-print">
-        <div><h4 class="mb-0 text-primary">🏛️ منظومة المشاريع الكبرى</h4><small class="text-muted">بلدية باجة - متابعة الإنجاز والسيولة</small></div>
-        <button onclick="window.print()" class="btn btn-dark btn-sm shadow-sm">🖨️ طباعة التقرير الفني</button>
+    <div class="row g-2 no-print border p-3 rounded bg-light mb-4">
+        <div class="col-md-3"><label class="form-label">اسم المشروع</label><input type="text" id="n" class="form-control form-control-sm"></div>
+        <div class="col-md-2"><label class="form-label">المقاول</label><input type="text" id="c" class="form-control form-control-sm"></div>
+        <div class="col-md-2"><label class="form-label">مكتب الدراسات</label><input type="text" id="office" class="form-control form-control-sm"></div>
+        <div class="col-md-1"><label class="form-label">المدة</label><input type="number" id="dur" class="form-control form-control-sm"></div>
+        <div class="col-md-2"><label class="form-label">التكلفة (أ.د)</label><input type="number" id="tot" class="form-control form-control-sm"></div>
+        <div class="col-md-2"><label class="form-label">المدفوع (أ.د)</label><input type="number" id="paid" class="form-control form-control-sm"></div>
+       
+        <div class="col-md-2"><label class="form-label">التقدم المادي (%)</label><input type="number" id="prog_m" class="form-control form-control-sm"></div>
+        <div class="col-md-2"><label class="form-label text-primary">بصدد الأشغال</label><input type="text" id="z_o" class="form-control form-control-sm"></div>
+        <div class="col-md-2"><label class="form-label text-danger">لم تبدأ</label><input type="text" id="z_p" class="form-control form-control-sm"></div>
+        <div class="col-md-2"><label class="form-label text-success">انتهت</label><input type="text" id="z_d" class="form-control form-control-sm"></div>
+       
+        <div class="col-md-1"><label class="form-label">جوية (أيام)</label><input type="number" id="p_wea" class="form-control form-control-sm" value="0"></div>
+        <div class="col-md-1"><label class="form-label">مقاول (أيام)</label><input type="number" id="p_con" class="form-control form-control-sm" value="0"></div>
+        <div class="col-md-2 d-flex align-items-end"><button onclick="saveData()" class="btn btn-save w-100 btn-sm">💾 حفظ البيانات</button></div>
     </div>
 
-    <div class="card no-print"><div class="card-header">📋 إدخال بيانات العملية</div><div class="card-body bg-light"><div class="row g-3">
-        <div class="col-md-4"><label class="form-label">اسم المشروع</label><input type="text" id="n" class="form-control"></div>
-        <div class="col-md-4"><label class="form-label">المقاولة</label><input type="text" id="c" class="form-control"></div>
-        <div class="col-md-4"><label class="form-label">مكتب الدراسات</label><input type="text" id="st" class="form-control"></div>
-        <div class="col-md-2"><label class="form-label">المدة (يوم)</label><input type="number" id="dur" class="form-control"></div>
-        <div class="col-md-3"><label class="form-label">إذن بدء/استئناف</label><input type="text" id="os" class="form-control"></div>
-        <div class="col-md-2"><label class="form-label">التكلفة (د.ت)</label><input type="number" id="tot" class="form-control"></div>
-        <div class="col-md-2"><label class="form-label">المدفوع (د.ت)</label><input type="number" id="paid" class="form-control"></div>
-        <div class="col-md-3"><label class="form-label">التقدم المادي %</label><input type="number" id="prog_m" class="form-control"></div>
-        <div class="col-md-12 border-top mt-3 pt-2"><span class="badge bg-secondary">جدول التوقفات (أيام)</span></div>
-        <div class="col-md-4"><label class="form-label">توقف (بلدية)</label><input type="number" id="p_mun" class="form-control" value="0"></div>
-        <div class="col-md-4"><label class="form-label">أحوال جوية</label><input type="number" id="p_wea" class="form-control" value="0"></div>
-        <div class="col-md-4"><label class="form-label">مسؤولية المقاول</label><input type="number" id="p_con" class="form-control" value="0"></div>
-        <div class="col-12 text-center mt-3 border-top pt-3"><button onclick="save()" class="btn btn-primary px-5 fw-bold shadow">حفظ البيانات ومعالجتها</button></div>
-    </div></div></div>
-
-    <div class="card"><div class="table-responsive"><table class="table table-bordered text-center align-middle mb-0">
-        <thead>
-            <tr>
-                <th rowspan="2">المشروع والمشاركين</th><th rowspan="2">المدة / الأذون</th><th colspan="3">الوضعية المالية (د.ت)</th><th colspan="2">التقدم %</th><th colspan="4">أيام التوقف</th><th rowspan="2" class="no-print">تحكم</th>
-            </tr><tr>
-                <th>التكلفة</th><th>المدفوع</th><th>المتبقي</th><th>مالي</th><th>مادي</th><th>بلدية</th><th>جو</th><th>مقاول</th><th>الصافي</th>
-            </tr>
-        </thead><tbody id="list"></tbody>
-    </table></div></div>
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th rowspan="2">المشروع / المقاول / المكتب</th>
+                    <th rowspan="2">البيانات المالية (أ.د)</th>
+                    <th rowspan="2">التقدم المالي</th>
+                    <th rowspan="2">التقدم المادي</th>
+                    <th colspan="3">مناطق التدخل</th>
+                    <th colspan="2">أيام التوقف</th>
+                    <th rowspan="2" class="no-print">إجراء</th>
+                </tr>
+                <tr>
+                    <th>بصدد الإنجاز</th>
+                    <th>لم تبدأ بعد</th>
+                    <th>منتهية</th>
+                    <th>جوية</th>
+                    <th>مقاول</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
 </div>
 
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import{getDatabase,ref,onValue,push,remove}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-const config={databaseURL:"https://suivi-projets-4817b-default-rtdb.firebaseio.com/"};
-const app=initializeApp(config);const db=getDatabase(app);const r=ref(db,'projects_v3');
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-onValue(r,(snap)=>{
-const d=snap.val();const l=document.getElementById('list');l.innerHTML='';
-if(d){Object.keys(d).forEach(k=>{const p=d[k];
-const rem=(p.tot-p.paid).toFixed(3); const per_f=p.tot>0?((p.paid/p.tot)*100).toFixed(1):0;
-const net_days=p.dur-p.p_con;
+    const firebaseConfig = { databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const r = ref(db, 'projects_v4');
 
-l.insertAdjacentHTML('afterbegin',`<tr>
-<td class="text-end"><b>${p.name}</b><br><small class="text-muted">${p.c} | ${p.st}</small></td>
-<td><small>${p.dur} يوم<br>OS: ${p.os}</small></td>
-<td>${p.tot}</td><td>${p.paid}</td><td class="text-danger fw-bold">${rem}</td>
-<td><span class="status-badge bg-light text-dark border">${per_f}%</span></td><td><span class="status-badge bg-primary text-white">${p.prog_m}%</span></td>
-<td>${p.p_mun}</td><td>${p.p_wea}</td><td>${p.p_con}</td><td><b class="net-value">${net_days}</b></td>
-<td class="no-print"><button onclick="del('${k}')" class="btn btn-sm text-danger">حذف</button></td></tr>`)});}
-else{l.innerHTML='<tr><td colspan="12">لا توجد بيانات حالياً</td></tr>'}},(e)=>alert(e.message));
+    // العرض
+    onValue(r, (s) => {
+        const data = s.val();
+        const b = document.getElementById('tableBody');
+        b.innerHTML = '';
+        if (data) {
+            Object.keys(data).forEach(k => {
+                const p = data[k];
+                const financial_p = ((p.paid / p.tot) * 100).toFixed(1);
+                b.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td class="text-end"><b>${p.name}</b><br><small>المقاول: ${p.c}</small><br><small>المكتب: ${p.office || '---'}</small></td>
+                        <td><small>كلفة: ${p.tot}<br>دفع: ${p.paid}</small></td>
+                        <td class="fw-bold">${financial_p}%</td>
+                        <td class="fw-bold text-primary text-center">${p.prog_m}%</td>
+                        <td>${p.z_o || '---'}</td>
+                        <td class="text-danger">${p.z_p || '---'}</td>
+                        <td class="text-success">${p.z_d || '---'}</td>
+                        <td class="text-center">${p.p_wea || 0}</td>
+                        <td class="text-center">${p.p_con || 0}</td>
+                        <td class="no-print text-center"><button onclick="del('${k}')" class="btn btn-sm btn-danger">حذف</button></td>
+                    </tr>
+                `);
+            });
+        }
+    });
 
-window.save=function(){
-const pData={
-name:document.getElementById('n').value, c:document.getElementById('c').value, st:document.getElementById('st').value,
-dur:Number(document.getElementById('dur').value), os:document.getElementById('os').value,
-tot:Number(document.getElementById('tot').value), paid:Number(document.getElementById('paid').value),
-prog_m:Number(document.getElementById('prog_m').value), p_mun:Number(document.getElementById('p_mun').value),
-p_wea:Number(document.getElementById('p_wea').value), p_con:Number(document.getElementById('p_con').value)
-};
-if(!pData.name){alert("الرجاء إدخال اسم المشروع");return;}
-push(r,pData).then(()=>{alert("تم الحفظ بنجاح"); document.querySelectorAll('input').forEach(i=>i.value='')});};
-window.del=function(k){if(confirm("حذف المشروع؟")){remove(ref(db,'projects_v3/'+k));}};
-</script></body></html> 
+    // الحفظ
+    window.saveData = function() {
+        const pData = {
+            name: document.getElementById('n').value,
+            c: document.getElementById('c').value,
+            office: document.getElementById('office').value,
+            dur: document.getElementById('dur').value,
+            tot: parseFloat(document.getElementById('tot').value) || 0,
+            paid: parseFloat(document.getElementById('paid').value) || 0,
+            prog_m: document.getElementById('prog_m').value,
+            z_o: document.getElementById('z_o').value,
+            z_p: document.getElementById('z_p').value,
+            z_d: document.getElementById('z_d').value,
+            p_wea: document.getElementById('p_wea').value,
+            p_con: document.getElementById('p_con').value
+        };
+        if(!pData.name) return alert("أدخل اسم المشروع");
+        push(r, pData).then(() => { alert("تم الحفظ بنجاح"); location.reload(); });
+    };
+
+    // الحذف
+    window.del = function(k) {
+        if(confirm("حذف المشروع؟")) remove(ref(db, 'projects_v4/' + k));
+    };
+</script>
+</body>
+</html> 
