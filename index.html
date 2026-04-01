@@ -1,10 +1,90 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>بلدية باجة - متابعة المشاريع</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><style>
-:root{--main-blue:#003366;--soft-bg:#f8f9fa} body{background-color:var(--soft-bg);font-family:'Segoe UI',Arial,sans-serif;font-size:13px}
-.header-section{background:white;border-bottom:3px solid var(--main-blue);padding:20px;margin-bottom:20px;border-radius:0 0 15px 15px;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
-.card{border:none;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);margin-bottom:20px} .card-header{background:var(--main-blue);color:white;font-weight:bold;border-radius:12px 12px 0 0 !important;padding:12px}
-.form-label{font-weight:600;color:#444;font-size:12px} .table{background:white;border-radius:8px;overflow:hidden}
-.table thead{background:#eff3f6;color:var(--main-blue)} .table th{border-bottom:2px solid #dee2e6;padding:12px;font-size:11px}
-.status-badge{padding:4px 8px;border-radius:20px;font-size:11px;font-weight:bold} .net-value{background:#fff3cd;color:#856404;padding:3px 6px;border-radius:4px}
-@media print{ .no-print{display:none !important} body{background:white;padding:0} .card{box-shadow:none;border:1px solid #eee} .table th{background:#f0f0f0 !important;color:black !important;border:1px solid #000 !important} .table td{border:1px solid #000 !important} .print-header{display:block !important;text-align:center;margin-bottom:20px} }
-.print-header{display:none}
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>تقرير متابعة المشاريع - بلدية باجة</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><style>
+:root{--navy:#002b5c;--gold:#bfa100;--soft-gray:#f9f9f9} body{background:var(--soft-gray);font-family:'Segoe UI',Tahoma;font-size:12px;color:#333}
+.report-page{background:white;padding:30px;max-width:1000px;margin:20px auto;border:1px solid #ddd;box-shadow:0 0 20px rgba(0,0,0,0.1);border-radius:8px}
+.official-header{border-bottom:2px solid var(--navy);margin-bottom:20px;padding-bottom:10px} .section-title{background:#eef2f7;padding:8px;font-weight:bold;border-right:5px solid var(--navy);margin:15px 0}
+.data-table{width:100%;border-collapse:collapse;margin-bottom:15px} .data-table th,.data-table td{border:1px solid #ccc;padding:8px;text-align:right} .data-table th{background:#f4f4f4;width:25%}
+.action-panel{background:#fff;border:2px dashed var(--navy);padding:15px;margin-bottom:20px;border-radius:10px} .status-working{color:green;font-weight:bold} .status-stopped{color:red;font-weight:bold}
+@media print{ .no-print{display:none !important} .report-page{border:none;box-shadow:none;margin:0;width:100%} body{background:white} }
 </style></head><body>
+
+<div class="report-page">
+    <div class="official-header d-flex justify-content-between align-items-center">
+        <div class="text-center"><h6>الجمهورية التونسية</h6><h6>وزارة الشؤون المحلية والبيئة</h6><h5>بلدية باجة - المصلحة الفنية</h5></div>
+        <div class="text-center no-print"><button onclick="window.print()" class="btn btn-sm btn-dark shadow">🖨️ طباعة التقرير الفني</button></div>
+    </div>
+
+    <div class="action-panel no-print">
+        <h6 class="text-primary mb-3">📍 تسجيل الحركة اليومية للمشروع</h6>
+        <div class="row g-2">
+            <div class="col-md-3"><label>اسم المشروع</label><input type="text" id="n" class="form-control form-control-sm"></div>
+            <div class="col-md-2"><label>الميزانية (أ.د)</label><input type="number" id="tot" class="form-control form-control-sm"></div>
+            <div class="col-md-2"><label>مدة الإنجاز</label><input type="number" id="dur" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label>ملاحظات/أسباب التوقف</label><input type="text" id="note" class="form-control form-control-sm"></div>
+            <div class="col-md-2 d-flex align-items-end gap-1">
+                <button onclick="logMovement('عمل')" class="btn btn-sm btn-success w-100">✔ عمل</button>
+                <button onclick="logMovement('توقف')" class="btn btn-sm btn-danger w-100">✖ توقف</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="projects-container">
+        </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const app = initializeApp({ databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" });
+const db = getDatabase(app); const r = ref(db, 'official_reports_v5');
+
+onValue(r, (snap) => {
+    const data = snap.val(); const container = document.getElementById('projects-container'); container.innerHTML = '';
+    if (data) {
+        Object.keys(data).forEach(k => {
+            const p = data[k];
+            const netDays = p.dur - (p.stops_total || 0);
+            container.insertAdjacentHTML('beforeend', `
+                <div class="project-block mb-5">
+                    <div class="section-title">أولاً: بيانات المشروع</div>
+                    <table class="data-table">
+                        <tr><th>اسم المشروع</th><td colspan="3"><b>${p.name}</b></td></tr>
+                        <tr><th>الميزانية الجملية</th><td>${p.tot} أ.د</td><th>التقدم المالي</th><td>${p.prog_f || 0}%</td></tr>
+                    </table>
+
+                    <div class="section-title">ثالثاً: الجدول الزمني والأذون الإدارية</div>
+                    <table class="data-table">
+                        <tr><th>مدة الإنجاز</th><td>${p.dur} يوم</td><th>أيام العمل الفعلية</th><td>${netDays} يوم</td></tr>
+                        <tr><th>أيام التوقف</th><td class="text-danger fw-bold">${p.stops_total || 0} يوم</td><th>الرصيد الصافي المتبقي</th><td>${netDays} يوم</td></tr>
+                    </table>
+
+                    <div class="section-title">رابعاً: سجل الأذون والحركات التفصيلي</div>
+                    <table class="data-table text-center">
+                        <thead class="table-light"><tr><th>التاريخ</th><th>نوع الإذن</th><th>الملاحظات / الأسباب</th><th class="no-print">إجراء</th></tr></thead>
+                        <tbody>
+                            <tr><td>${p.date}</td><td><span class="${p.type === 'عمل' ? 'status-working' : 'status-stopped'}">${p.type}</span></td><td>${p.note || 'عمل عادي'}</td>
+                            <td class="no-print"><button onclick="del('${k}')" class="btn btn-link btn-sm text-danger">حذف</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `);
+        });
+    } else { container.innerHTML = '<div class="alert alert-info">لا توجد مشاريع مسجلة حالياً</div>'; }
+});
+
+window.logMovement = function(type) {
+    const pData = {
+        name: document.getElementById('n').value,
+        tot: document.getElementById('tot').value,
+        dur: Number(document.getElementById('dur').value),
+        note: document.getElementById('note').value,
+        type: type,
+        stops_total: type === 'توقف' ? 1 : 0,
+        date: new Date().toLocaleDateString('fr-CA')
+    };
+    if(!pData.name) return alert("الرجاء إدخال اسم المشروع");
+    push(r, pData).then(() => { alert("تم تسجيل الحركة بنجاح"); document.getElementById('note').value=''; });
+};
+
+window.del = function(k) { if(confirm("حذف السجل؟")) remove(ref(db, 'official_reports_v5/' + k)); };
+</script></body></html> 
