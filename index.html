@@ -1,90 +1,129 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>تقرير متابعة المشاريع - بلدية باجة</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><style>
-:root{--navy:#002b5c;--gold:#bfa100;--soft-gray:#f9f9f9} body{background:var(--soft-gray);font-family:'Segoe UI',Tahoma;font-size:12px;color:#333}
-.report-page{background:white;padding:30px;max-width:1000px;margin:20px auto;border:1px solid #ddd;box-shadow:0 0 20px rgba(0,0,0,0.1);border-radius:8px}
-.official-header{border-bottom:2px solid var(--navy);margin-bottom:20px;padding-bottom:10px} .section-title{background:#eef2f7;padding:8px;font-weight:bold;border-right:5px solid var(--navy);margin:15px 0}
-.data-table{width:100%;border-collapse:collapse;margin-bottom:15px} .data-table th,.data-table td{border:1px solid #ccc;padding:8px;text-align:right} .data-table th{background:#f4f4f4;width:25%}
-.action-panel{background:#fff;border:2px dashed var(--navy);padding:15px;margin-bottom:20px;border-radius:10px} .status-working{color:green;font-weight:bold} .status-stopped{color:red;font-weight:bold}
-@media print{ .no-print{display:none !important} .report-page{border:none;box-shadow:none;margin:0;width:100%} body{background:white} }
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>منظومة متابعة المشاريع - بلدية باجة</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    :root { --primary-color: #004085; --accent-color: #f8f9fa; }
+    body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .main-card { border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: none; margin-top: 20px; }
+    .header-top { background: var(--primary-color); color: white; padding: 25px; border-radius: 15px 15px 0 0; text-align: center; }
+    .status-working { background-color: #d4edda; color: #155724; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+    .status-stopped { background-color: #f8d7da; color: #721c24; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+    .table thead { background: #e9ecef; color: var(--primary-color); }
+    .note-cell { max-width: 150px; font-size: 0.85rem; color: #666; }
+   
+    @media print {
+        .no-print { display: none !important; }
+        body { background: white; }
+        .main-card { box-shadow: none; border: 1px solid #ccc; }
+        .table th { background-color: #eee !important; color: black !important; }
+        .print-only-header { display: block !important; text-align: center; border-bottom: 2px solid black; margin-bottom: 20px; }
+    }
+    .print-only-header { display: none; }
 </style></head><body>
 
-<div class="report-page">
-    <div class="official-header d-flex justify-content-between align-items-center">
-        <div class="text-center"><h6>الجمهورية التونسية</h6><h6>وزارة الشؤون المحلية والبيئة</h6><h5>بلدية باجة - المصلحة الفنية</h5></div>
-        <div class="text-center no-print"><button onclick="window.print()" class="btn btn-sm btn-dark shadow">🖨️ طباعة التقرير الفني</button></div>
+<div class="container-fluid py-4">
+    <div class="print-only-header">
+        <h2>الجمهورية التونسية</h2>
+        <h3>وزارة الشؤون المحلية - بلدية باجة</h3>
+        <p>تقرير متابعة المشاريع الفنية - كشف الحساب اليومي والشهري</p>
     </div>
 
-    <div class="action-panel no-print">
-        <h6 class="text-primary mb-3">📍 تسجيل الحركة اليومية للمشروع</h6>
-        <div class="row g-2">
-            <div class="col-md-3"><label>اسم المشروع</label><input type="text" id="n" class="form-control form-control-sm"></div>
-            <div class="col-md-2"><label>الميزانية (أ.د)</label><input type="number" id="tot" class="form-control form-control-sm"></div>
-            <div class="col-md-2"><label>مدة الإنجاز</label><input type="number" id="dur" class="form-control form-control-sm"></div>
-            <div class="col-md-3"><label>ملاحظات/أسباب التوقف</label><input type="text" id="note" class="form-control form-control-sm"></div>
-            <div class="col-md-2 d-flex align-items-end gap-1">
-                <button onclick="logMovement('عمل')" class="btn btn-sm btn-success w-100">✔ عمل</button>
-                <button onclick="logMovement('توقف')" class="btn btn-sm btn-danger w-100">✖ توقف</button>
+    <div class="card main-card">
+        <div class="header-top no-print">
+            <h2 class="mb-0">🏛️ المصلحة الفنية - منظومة المتابعة اليومية</h2>
+            <p class="mt-2 opacity-75">إدارة المشاريع، التوقفات، والتقارير الشهرية</p>
+            <button onclick="window.print()" class="btn btn-light btn-sm mt-2 shadow-sm">🖨️ طباعة تقرير احترافي</button>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3 no-print mb-4 p-3 border rounded bg-light">
+                <div class="col-md-3"><label>اسم المشروع</label><input type="text" id="n" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label>الميزانية (د.ت)</label><input type="number" id="tot" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label>مدة الإنجاز</label><input type="number" id="dur" class="form-control form-control-sm"></div>
+                <div class="col-md-3"><label>المقاولة</label><input type="text" id="c" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label>ملاحظات فنية</label><input type="text" id="note" class="form-control form-control-sm" placeholder="أدخل أي ملاحظات..."></div>
+               
+                <div class="col-md-12 d-flex justify-content-between align-items-end mt-3 border-top pt-3">
+                    <div class="d-flex gap-2">
+                        <button onclick="save('working')" class="btn btn-success px-4">✅ تسجيل يوم عمل</button>
+                        <button onclick="save('stopped')" class="btn btn-danger px-4">🛑 تسجيل توقف</button>
+                    </div>
+                    <small class="text-muted">الحساب يتم آلياً بناءً على الحالة المسجلة اليوم</small>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle text-center">
+                    <thead>
+                        <tr>
+                            <th>المشروع / المقاول</th>
+                            <th>الميزانية</th>
+                            <th>مدة الإنجاز</th>
+                            <th>توقفات الشهر</th>
+                            <th>الحالة اليومية</th>
+                            <th>أسباب التوقف / الملاحظات</th>
+                            <th class="no-print">إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list"></tbody>
+                </table>
             </div>
         </div>
     </div>
-
-    <div id="projects-container">
-        </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const app = initializeApp({ databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" });
-const db = getDatabase(app); const r = ref(db, 'official_reports_v5');
+const config = { databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" };
+const app = initializeApp(config); const db = getDatabase(app); const r = ref(db, 'projets_v4');
 
 onValue(r, (snap) => {
-    const data = snap.val(); const container = document.getElementById('projects-container'); container.innerHTML = '';
-    if (data) {
-        Object.keys(data).forEach(k => {
-            const p = data[k];
-            const netDays = p.dur - (p.stops_total || 0);
-            container.insertAdjacentHTML('beforeend', `
-                <div class="project-block mb-5">
-                    <div class="section-title">أولاً: بيانات المشروع</div>
-                    <table class="data-table">
-                        <tr><th>اسم المشروع</th><td colspan="3"><b>${p.name}</b></td></tr>
-                        <tr><th>الميزانية الجملية</th><td>${p.tot} أ.د</td><th>التقدم المالي</th><td>${p.prog_f || 0}%</td></tr>
-                    </table>
-
-                    <div class="section-title">ثالثاً: الجدول الزمني والأذون الإدارية</div>
-                    <table class="data-table">
-                        <tr><th>مدة الإنجاز</th><td>${p.dur} يوم</td><th>أيام العمل الفعلية</th><td>${netDays} يوم</td></tr>
-                        <tr><th>أيام التوقف</th><td class="text-danger fw-bold">${p.stops_total || 0} يوم</td><th>الرصيد الصافي المتبقي</th><td>${netDays} يوم</td></tr>
-                    </table>
-
-                    <div class="section-title">رابعاً: سجل الأذون والحركات التفصيلي</div>
-                    <table class="data-table text-center">
-                        <thead class="table-light"><tr><th>التاريخ</th><th>نوع الإذن</th><th>الملاحظات / الأسباب</th><th class="no-print">إجراء</th></tr></thead>
-                        <tbody>
-                            <tr><td>${p.date}</td><td><span class="${p.type === 'عمل' ? 'status-working' : 'status-stopped'}">${p.type}</span></td><td>${p.note || 'عمل عادي'}</td>
-                            <td class="no-print"><button onclick="del('${k}')" class="btn btn-link btn-sm text-danger">حذف</button></td></tr>
-                        </tbody>
-                    </table>
-                </div>
+    const d = snap.val(); const l = document.getElementById('list'); l.innerHTML = '';
+    if (d) {
+        Object.keys(d).forEach(k => {
+            const p = d[k];
+            const statusClass = p.status === 'working' ? 'status-working' : 'status-stopped';
+            const statusText = p.status === 'working' ? 'قيد العمل' : 'متوقف حالياً';
+           
+            l.insertAdjacentHTML('afterbegin', `
+                <tr>
+                    <td class="text-end"><b>${p.name}</b><br><small>${p.c}</small></td>
+                    <td>${p.tot} د.ت</td>
+                    <td>${p.dur} يوم</td>
+                    <td><span class="badge bg-dark">${p.stops_count || 0} أيام</span></td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
+                    <td class="note-cell">${p.note || '-'}</td>
+                    <td class="no-print"><button onclick="del('${k}')" class="btn btn-sm btn-outline-danger">حذف</button></td>
+                </tr>
             `);
         });
-    } else { container.innerHTML = '<div class="alert alert-info">لا توجد مشاريع مسجلة حالياً</div>'; }
+    } else { l.innerHTML = '<tr><td colspan="7">لا توجد سجلات حالياً</td></tr>'; }
 });
 
-window.logMovement = function(type) {
+window.save = function(statusType) {
+    const name = document.getElementById('n').value;
+    const dur = Number(document.getElementById('dur').value);
+    const note = document.getElementById('note').value;
+   
+    if(!name) { alert("أدخل اسم المشروع أولاً"); return; }
+
     const pData = {
-        name: document.getElementById('n').value,
+        name: name,
         tot: document.getElementById('tot').value,
-        dur: Number(document.getElementById('dur').value),
-        note: document.getElementById('note').value,
-        type: type,
-        stops_total: type === 'توقف' ? 1 : 0,
-        date: new Date().toLocaleDateString('fr-CA')
+        dur: dur,
+        c: document.getElementById('c').value,
+        note: note,
+        status: statusType,
+        stops_count: statusType === 'stopped' ? 1 : 0, // يبدأ الحساب من أول تسجيل
+        date: new Date().toLocaleDateString()
     };
-    if(!pData.name) return alert("الرجاء إدخال اسم المشروع");
-    push(r, pData).then(() => { alert("تم تسجيل الحركة بنجاح"); document.getElementById('note').value=''; });
+
+    push(r, pData).then(() => {
+        alert("تم تسجيل الحالة بنجاح");
+        document.getElementById('note').value = '';
+    });
 };
 
-window.del = function(k) { if(confirm("حذف السجل؟")) remove(ref(db, 'official_reports_v5/' + k)); };
+window.del = function(k) { if(confirm("حذف هذا السجل؟")) remove(ref(db, 'projets_v4/' + k)); };
 </script></body></html> 
