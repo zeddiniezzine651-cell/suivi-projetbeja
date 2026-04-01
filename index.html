@@ -1,114 +1,119 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>منظومة بلدية باجة الاحترافية</title>
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>المنظومة الفنية - بلدية باجة</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    :root { --admin-blue: #003366; --table-border: #bcbcbc; }
-    body { background: #f0f2f5; font-family: 'Segoe UI', Tahoma; font-size: 13px; }
-    .official-page { background: white; max-width: 1100px; margin: 20px auto; padding: 40px; border: 1px solid #ddd; position: relative; }
-   
-    /* تنسيق نموذج الإدخال السطري المطابق لصورتك */
-    .entry-bar { border: 2px dashed var(--admin-blue); padding: 15px; border-radius: 8px; background: #fdfdfd; margin-bottom: 30px; }
-    .entry-bar label { display: block; font-size: 11px; color: #555; margin-bottom: 5px; text-align: center; }
-    .entry-bar input { border: none; border-bottom: 1px solid #ccc; text-align: center; border-radius: 0; padding: 5px; }
-    .entry-bar input:focus { box-shadow: none; border-bottom-color: var(--admin-blue); }
-
-    /* تنسيق الجداول الرسمية */
-    .section-head { background: #eee; font-weight: bold; padding: 5px 15px; border-right: 4px solid var(--admin-blue); margin: 20px 0 10px; }
-    .table-official { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    .table-official th, .table-official td { border: 1px solid var(--table-border); padding: 10px; text-align: center; }
-    .table-official th { background: #f8f9fa; font-size: 12px; }
-
-    @media print {
-        .no-print { display: none !important; }
-        .official-page { border: none; padding: 0; width: 100%; max-width: 100%; }
-        body { background: white; }
-    }
+    body { background: #f4f6f9; font-family: 'Segoe UI', Tahoma; font-size: 14px; }
+    .report-container { background: white; max-width: 1100px; margin: 20px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .official-header { border-bottom: 2px solid #003366; margin-bottom: 20px; padding-bottom: 10px; }
+    .entry-zone { background: #fdfdfd; border: 2px dashed #003366; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+    .entry-zone label { font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px; }
+    .table-official { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .table-official th, .table-official td { border: 1px solid #aaa; padding: 12px; text-align: center; }
+    .table-official th { background: #f8f9fa; color: #003366; }
+    .section-title { background: #eee; padding: 8px; font-weight: bold; border-right: 5px solid #003366; margin: 20px 0 10px; }
+    .btn-action { width: 100px; font-weight: bold; height: 45px; }
+    @media print { .no-print { display: none !important; } .report-container { border: none; box-shadow: none; width: 100%; } }
 </style></head><body>
 
-<div class="official-page">
-    <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-4">
-        <div class="text-center"><h6>الجمهورية التونسية</h6><h6>وزارة الشؤون المحلية والبيئة</h6><h5>بلدية باجة - المصلحة الفنية</h5></div>
-        <div class="no-print"><button onclick="window.print()" class="btn btn-outline-dark btn-sm">🖨️ طباعة التقرير</button></div>
+<div class="report-container">
+    <div class="official-header d-flex justify-content-between align-items-center">
+        <div class="text-center"><h6>الجمهورية التونسية</h6><h5>بلدية باجة - المصلحة الفنية</h5></div>
+        <div class="no-print"><button onclick="window.print()" class="btn btn-dark shadow-sm">🖨️ طباعة التقرير الفني</button></div>
     </div>
 
-    <div class="entry-bar no-print">
-        <div class="row g-2 align-items-end">
-            <div class="col-md-3"><label>اسم المشروع</label><input type="text" id="n" class="form-control"></div>
-            <div class="col-md-2"><label>الميزانية (أ.د)</label><input type="number" id="tot" class="form-control"></div>
-            <div class="col-md-2"><label>مدة الإنجاز</label><input type="number" id="dur" class="form-control"></div>
-            <div class="col-md-3"><label>ملاحظات / أسباب التوقف</label><input type="text" id="note" class="form-control"></div>
-            <div class="col-md-2 d-flex gap-1">
-                <button onclick="logData('عمل')" class="btn btn-success w-100 fw-bold">✔ عمل</button>
-                <button onclick="logData('توقف')" class="btn btn-danger w-100 fw-bold">✖ توقف</button>
+    <div class="entry-zone no-print">
+        <h6 class="text-primary mb-3">📍 تسجيل الحركة اليومية للمشروع</h6>
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3"><label>اسم المشروع</label><input type="text" id="projName" class="form-control border-primary"></div>
+            <div class="col-md-2"><label>الميزانية (أ.د)</label><input type="number" id="budget" class="form-control border-primary"></div>
+            <div class="col-md-2"><label>مدة الإنجاز (يوم)</label><input type="number" id="duration" class="form-control border-primary"></div>
+            <div class="col-md-3"><label>ملاحظات / أسباب التوقف</label><input type="text" id="notes" class="form-control border-primary" placeholder="أدخل السبب هنا..."></div>
+            <div class="col-md-2 d-flex gap-2">
+                <button onclick="record('عمل')" class="btn btn-success btn-action shadow-sm">✔ عمل</button>
+                <button onclick="record('توقف')" class="btn btn-danger btn-action shadow-sm">✖ توقف</button>
             </div>
         </div>
     </div>
 
-    <div id="output-area">
-        </div>
+    <div id="displayArea">
+        <p class="text-center text-muted">جاري الاتصال بقاعدة البيانات...</p>
+    </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const app = initializeApp({ databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" });
-const db = getDatabase(app); const r = ref(db, 'final_reports_v6');
+// إعدادات قاعدة البيانات - تم تحديثها لضمان الاتصال
+const firebaseConfig = { databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" };
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const dataRef = ref(db, 'beja_official_v1');
 
-onValue(r, (snap) => {
-    const data = snap.val(); const out = document.getElementById('output-area'); out.innerHTML = '';
+// جلب وعرض البيانات فوراً
+onValue(dataRef, (snapshot) => {
+    const data = snapshot.val();
+    const displayArea = document.getElementById('displayArea');
+    displayArea.innerHTML = '';
+
     if (data) {
-        Object.keys(data).forEach(k => {
-            const p = data[k];
-            const netWork = p.dur - (p.stops || 0);
-            out.insertAdjacentHTML('beforeend', `
-                <div class="project-wrap mb-5">
-                    <div class="section-head">أولاً: المعطيات الفنية والمالية</div>
+        Object.keys(data).forEach(id => {
+            const item = data[id];
+            const remaining = item.duration - (item.stops || 0);
+           
+            displayArea.insertAdjacentHTML('beforeend', `
+                <div class="project-block mb-5 border-bottom pb-4">
+                    <div class="section-title">أولاً: بيانات المشروع الأساسية</div>
                     <table class="table-official">
-                        <tr><th width="20%">المشروع</th><td colspan="3"><b>${p.name}</b></td></tr>
-                        <tr><th>الميزانية</th><td>${p.tot} أ.د</td><th width="20%">المقاولة</th><td>${p.c || 'غير محدد'}</td></tr>
+                        <tr><th width="20%">المشروع</th><td colspan="3"><b>${item.name}</b></td></tr>
+                        <tr><th width="20%">الميزانية</th><td>${item.budget} أ.د</td><th width="20%">التاريخ</th><td>${item.timestamp}</td></tr>
                     </table>
 
-                    <div class="section-head">ثالثاً: الجدول الزمني والحركات</div>
+                    <div class="section-title">ثالثاً: حساب التوقفات والرصيد الزمني</div>
                     <table class="table-official">
-                        <tr><th>مدة الإنجاز</th><td>${p.dur} يوم</td><th>أيام التوقف</th><td class="text-danger fw-bold">${p.stops || 0} يوم</td></tr>
-                        <tr><th>الرصيد المتبقي</th><td>${netWork} يوم</td><th>التاريخ</th><td>${p.date}</td></tr>
+                        <tr><th>المدة التعاقدية</th><td>${item.duration} يوم</td><th>أيام التوقف</th><td class="text-danger fw-bold">${item.stops || 0} يوم</td></tr>
+                        <tr><th>الرصيد الصافي المتبقي</th><td class="bg-light fw-bold">${remaining} يوم</td><th>الحالة الحالية</th><td><span class="badge ${item.status === 'عمل' ? 'bg-success' : 'bg-danger'}">${item.status}</span></td></tr>
                     </table>
 
-                    <div class="section-head">رابعاً: سجل الحركات اليومية</div>
+                    <div class="section-title">رابعاً: سجل الحركات والملاحظات</div>
                     <table class="table-official">
-                        <thead class="table-light"><tr><th>الحالة</th><th>الأسباب والملاحظات</th><th class="no-print">تحكم</th></tr></thead>
+                        <thead class="table-secondary"><tr><th>نوع الحركة</th><th>الملاحظات الفنية / أسباب التوقف</th><th class="no-print">تحكم</th></tr></thead>
                         <tbody>
                             <tr>
-                                <td><span class="badge ${p.type==='عمل'?'bg-success':'bg-danger'}">${p.type}</span></td>
-                                <td>${p.note || '---'}</td>
-                                <td class="no-print"><button onclick="del('${k}')" class="btn btn-sm btn-link text-danger">حذف</button></td>
+                                <td><b>${item.status}</b></td>
+                                <td>${item.note || 'عمل عادي'}</td>
+                                <td class="no-print"><button onclick="removeItem('${id}')" class="btn btn-sm btn-outline-danger">حذف</button></td>
                             </tr>
                         </tbody>
                     </table>
-                    <hr style="border-top: 2px solid #333">
                 </div>
             `);
         });
-    } else { out.innerHTML = '<p class="text-center text-muted">لا توجد مشاريع مسجلة حالياً</p>'; }
+    } else {
+        displayArea.innerHTML = '<div class="alert alert-warning text-center">لا توجد مشاريع مسجلة. قم بإضافة أول مشروع الآن.</div>';
+    }
 });
 
-window.logData = function(type) {
-    const name = document.getElementById('n').value;
-    if(!name) return alert("الرجاء إدخال اسم المشروع");
-   
-    push(r, {
+// وظيفة التسجيل الذكية
+window.record = function(status) {
+    const name = document.getElementById('projName').value;
+    const dur = Number(document.getElementById('duration').value);
+    const note = document.getElementById('notes').value;
+
+    if (!name || !dur) { alert("الرجاء إكمال البيانات الأساسية (الاسم والمدة)"); return; }
+
+    push(dataRef, {
         name: name,
-        tot: document.getElementById('tot').value,
-        dur: Number(document.getElementById('dur').value),
-        note: document.getElementById('note').value,
-        type: type,
-        stops: type === 'توقف' ? 1 : 0,
-        date: new Date().toLocaleDateString('ar-TN')
+        budget: document.getElementById('budget').value || 0,
+        duration: dur,
+        note: note,
+        status: status,
+        stops: status === 'توقف' ? 1 : 0,
+        timestamp: new Date().toLocaleDateString('ar-TN')
     }).then(() => {
-        alert("تم التسجيل بنجاح");
-        document.getElementById('note').value = '';
+        document.getElementById('notes').value = '';
+        alert("تم تسجيل " + status + " بنجاح");
     });
 };
 
-window.del = function(k) { if(confirm("حذف السجل؟")) remove(ref(db, 'final_reports_v6/' + k)); };
+window.removeItem = function(id) { if(confirm("هل أنت متأكد من الحذف؟")) remove(ref(db, 'beja_official_v1/' + id)); };
 </script></body></html> 
