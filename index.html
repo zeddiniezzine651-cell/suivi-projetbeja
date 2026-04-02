@@ -3,64 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام متابعة مشاريع بلدية باجة</title>
+    <title>  منظومة متابعة المشاريع - بلدية باجة-المصلحة الفنية  </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; font-size: 13px; }
-        .container { max-width: 1300px; margin-top: 20px; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .header-section { border-bottom: 3px solid #0056b3; margin-bottom: 20px; padding-bottom: 10px; }
-        th { background-color: #e9ecef !important; text-align: center; border: 1px solid #000 !important; }
-        td { border: 1px solid #000 !important; vertical-align: middle; }
-        .form-label { font-weight: bold; margin-bottom: 2px; font-size: 12px; }
-        .btn-save { background-color: #0056b3; color: white; font-weight: bold; }
-        @media print { .no-print { display: none !important; } .container { width: 100% !important; max-width: none !important; box-shadow: none !important; margin: 0; } }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .container-fluid { padding: 20px; }
+        .no-print { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .form-label { font-weight: bold; color: #0056b3; }
+        textarea.form-control { min-height: 50px; border: 2px solid #ced4da; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 0; }
+        th, td { border: 1px solid #000 !important; padding: 10px; text-align: center; vertical-align: middle; }
+        th { background-color: #f2f2f2 !important; font-weight: bold; font-size: 13px; }
+       
+        /* تنسيق سطر الملاحظات العريض */
+        .notes-row { background-color: #fcfcfc !important; text-align: right !important; padding: 8px 20px !important; font-size: 12px; }
+        .notes-label { font-weight: bold; color: #444; text-decoration: underline; margin-left: 10px; }
+       
+        .btn-edit { background-color: #ffc107; color: black; border: none; }
+        .editing-mode { background-color: #fff3cd !important; border: 2px solid #ffc107 !important; }
+
+        @media print {
+            @page { size: A4 landscape; margin: 1cm; }
+            .no-print { display: none !important; }
+            /* ضمان بقاء سطر الملاحظات مع سطر المشروع في نفس الصفحة */
+            tr { page-break-inside: avoid; }
+            .project-group { page-break-after: auto; margin-bottom: 10px; border: 2px solid #000; }
+            td { font-size: 12px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-section d-flex justify-content-between align-items-center">
-        <div class="text-center"><h6>الجمهورية التونسية</h6><h6>بلدية باجة - المصلحة الفنية</h6></div>
-        <h4 class="text-primary">متابعة حضائر الأشغال الجارية</h4>
-        <button onclick="window.print()" class="btn btn-outline-dark no-print">🖨️ طباعة التقرير</button>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+        <h4 class="text-primary fw-bold">منظومة متابعة المشاريع - بلدية باجة-المصلحة الفنية </h4>
+        <div>
+            <button onclick="location.reload()" class="btn btn-outline-primary me-2">🔄 تحيين</button>
+            <button onclick="window.print()" class="btn btn-dark">🖨️ طباعة التقارير</button>
+        </div>
     </div>
 
-    <div class="row g-2 no-print border p-3 rounded bg-light mb-4">
-        <div class="col-md-3"><label class="form-label">اسم المشروع</label><input type="text" id="n" class="form-control form-control-sm"></div>
-        <div class="col-md-2"><label class="form-label">المقاول</label><input type="text" id="c" class="form-control form-control-sm"></div>
-        <div class="col-md-2"><label class="form-label">مكتب الدراسات</label><input type="text" id="office" class="form-control form-control-sm"></div>
-        <div class="col-md-1"><label class="form-label">المدة</label><input type="number" id="dur" class="form-control form-control-sm"></div>
-        <div class="col-md-2"><label class="form-label">التكلفة (أ.د)</label><input type="number" id="tot" class="form-control form-control-sm"></div>
-        <div class="col-md-2"><label class="form-label">المدفوع (أ.د)</label><input type="number" id="paid" class="form-control form-control-sm"></div>
-       
-        <div class="col-md-2"><label class="form-label">التقدم المادي (%)</label><input type="number" id="prog_m" class="form-control form-control-sm"></div>
-        <div class="col-md-2"><label class="form-label text-primary">بصدد الأشغال</label><input type="text" id="z_o" class="form-control form-control-sm"></div>
-        <div class="col-md-2"><label class="form-label text-danger">لم تبدأ</label><input type="text" id="z_p" class="form-control form-control-sm"></div>
-        <div class="col-md-2"><label class="form-label text-success">انتهت</label><input type="text" id="z_d" class="form-control form-control-sm"></div>
-       
-        <div class="col-md-1"><label class="form-label">جوية (أيام)</label><input type="number" id="p_wea" class="form-control form-control-sm" value="0"></div>
-        <div class="col-md-1"><label class="form-label">مقاول (أيام)</label><input type="number" id="p_con" class="form-control form-control-sm" value="0"></div>
-        <div class="col-md-2 d-flex align-items-end"><button onclick="saveData()" class="btn btn-save w-100 btn-sm">💾 حفظ البيانات</button></div>
+    <div id="inputSection" class="no-print border p-3 rounded shadow-sm">
+        <input type="hidden" id="editId">
+        <div class="row g-2">
+            <div class="col-md-3"><label class="form-label">المشروع</label><textarea id="n" class="form-control"></textarea></div>
+            <div class="col-md-2"><label class="form-label">المقاول/المكتب</label><textarea id="c" class="form-control"></textarea></div>
+            <div class="col-md-1"><label class="form-label">كلفة</label><input type="number" id="tot" class="form-control"></div>
+            <div class="col-md-1"><label class="form-label">دفع</label><input type="number" id="paid" class="form-control"></div>
+            <div class="col-md-2"><label class="form-label">بصدد الإنجاز</label><textarea id="z_o" class="form-control"></textarea></div>
+            <div class="col-md-2"><label class="form-label">لم تبدأ</label><textarea id="z_p" class="form-control"></textarea></div>
+            <div class="col-md-1"><label class="form-label">منتهية</label><textarea id="z_d" class="form-control"></textarea></div>
+            <div class="col-md-1"><label class="form-label">مادي%</label><input type="number" id="prog_m" class="form-control"></div>
+            <div class="col-md-1"><label class="form-label">  توقف سوء احوال جوية   </label><input type="number" id="p_wea" class="form-control" value="0"></div>
+            <div class="col-md-1"><label class="form-label">توقف مسؤول عنه المقاول</label><input type="number" id="p_con" class="form-control" value="0"></div>
+            <div class="col-md-7"><label class="form-label">ملاحظات المشروع </label><textarea id="note" class="form-control"></textarea></div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button id="saveBtn" onclick="saveData()" class="btn btn-primary w-100 fw-bold">💾 حفظ</button>
+                <button id="cancelBtn" onclick="resetForm()" class="btn btn-secondary w-100 fw-bold d-none ms-2">إلغاء</button>
+            </div>
+        </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-sm">
+        <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th rowspan="2">المشروع / المقاول / المكتب</th>
-                    <th rowspan="2">البيانات المالية (أ.د)</th>
-                    <th rowspan="2">التقدم المالي</th>
-                    <th rowspan="2">التقدم المادي</th>
+                    <th rowspan="2" width="15%">المشروع</th>
+                    <th rowspan="2">المقاول</th>
+                    <th colspan="3">المالية</th>
+                    <th colspan="2">التقدم%</th>
                     <th colspan="3">مناطق التدخل</th>
-                    <th colspan="2">أيام التوقف</th>
+                    <th colspan="2">توقف</th>
                     <th rowspan="2" class="no-print">إجراء</th>
                 </tr>
                 <tr>
-                    <th>بصدد الإنجاز</th>
-                    <th>لم تبدأ بعد</th>
-                    <th>منتهية</th>
-                    <th>جوية</th>
-                    <th>مقاول</th>
+                    <th>كلفة</th><th>مدفوع</th><th>باقي</th>
+                    <th>مالي</th><th>مادي</th>
+                    <th>بصدد</th><th>لم تبدأ</th><th>انتهت</th>
+                    <th>سوء الاحوال الجوية  </th><th>    مسؤول عنه المقاول</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -70,63 +90,104 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    const firebaseConfig = { databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" };
-    const app = initializeApp(firebaseConfig);
+    const config = { databaseURL: "https://suivi-projets-4817b-default-rtdb.firebaseio.com/" };
+    const app = initializeApp(config);
     const db = getDatabase(app);
-    const r = ref(db, 'projects_v4');
+    const r = ref(db, 'projects_vFinal');
 
-    // العرض
     onValue(r, (s) => {
-        const data = s.val();
         const b = document.getElementById('tableBody');
         b.innerHTML = '';
+        const data = s.val();
         if (data) {
             Object.keys(data).forEach(k => {
                 const p = data[k];
-                const financial_p = ((p.paid / p.tot) * 100).toFixed(1);
+                const total = parseFloat(p.tot) || 0;
+                const paid = parseFloat(p.paid) || 0;
+                const remaining = total - paid;
+                const fin_p = total > 0 ? ((paid / total) * 100).toFixed(1) : 0;
+
+                // إضافة سطر البيانات الأساسي
                 b.insertAdjacentHTML('beforeend', `
                     <tr>
-                        <td class="text-end"><b>${p.name}</b><br><small>المقاول: ${p.c}</small><br><small>المكتب: ${p.office || '---'}</small></td>
-                        <td><small>كلفة: ${p.tot}<br>دفع: ${p.paid}</small></td>
-                        <td class="fw-bold">${financial_p}%</td>
-                        <td class="fw-bold text-primary text-center">${p.prog_m}%</td>
-                        <td>${p.z_o || '---'}</td>
-                        <td class="text-danger">${p.z_p || '---'}</td>
-                        <td class="text-success">${p.z_d || '---'}</td>
-                        <td class="text-center">${p.p_wea || 0}</td>
-                        <td class="text-center">${p.p_con || 0}</td>
-                        <td class="no-print text-center"><button onclick="del('${k}')" class="btn btn-sm btn-danger">حذف</button></td>
+                        <td class="text-end fw-bold">${p.name}</td>
+                        <td>${p.c}</td>
+                        <td>${total.toLocaleString()}</td>
+                        <td>${paid.toLocaleString()}</td>
+                        <td class="text-danger">${remaining.toLocaleString()}</td>
+                        <td class="fw-bold text-success">${fin_p}%</td>
+                        <td class="fw-bold text-primary">${p.prog_m}%</td>
+                        <td style="white-space: pre-wrap;">${p.z_o}</td>
+                        <td style="white-space: pre-wrap;">${p.z_p}</td>
+                        <td style="white-space: pre-wrap;">${p.z_d}</td>
+                        <td>${p.p_wea}</td><td>${p.p_con}</td>
+                        <td class="no-print">
+                            <button onclick="editProject('${k}', ${JSON.stringify(p).replace(/"/g, '&quot;')})" class="btn btn-sm btn-edit w-100 mb-1">تعديل</button>
+                            <button onclick="del('${k}')" class="btn btn-sm btn-danger w-100">حذف</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="12" class="notes-row">
+                            <span class="notes-label">ملاحظات فنية حول المشروع:</span>
+                            <span style="white-space: pre-wrap;">${p.note || 'لا توجد ملاحظات.'}</span>
+                        </td>
+                        <td class="no-print" style="background:#eee"></td>
                     </tr>
                 `);
             });
         }
     });
 
-    // الحفظ
     window.saveData = function() {
+        const id = document.getElementById('editId').value;
         const pData = {
-            name: document.getElementById('n').value,
-            c: document.getElementById('c').value,
-            office: document.getElementById('office').value,
-            dur: document.getElementById('dur').value,
+            name: document.getElementById('n').value, c: document.getElementById('c').value,
             tot: parseFloat(document.getElementById('tot').value) || 0,
             paid: parseFloat(document.getElementById('paid').value) || 0,
             prog_m: document.getElementById('prog_m').value,
-            z_o: document.getElementById('z_o').value,
-            z_p: document.getElementById('z_p').value,
-            z_d: document.getElementById('z_d').value,
-            p_wea: document.getElementById('p_wea').value,
-            p_con: document.getElementById('p_con').value
+            z_o: document.getElementById('z_o').value, z_p: document.getElementById('z_p').value, z_d: document.getElementById('z_d').value,
+            p_wea: document.getElementById('p_wea').value, p_con: document.getElementById('p_con').value,
+            note: document.getElementById('note').value
         };
         if(!pData.name) return alert("أدخل اسم المشروع");
-        push(r, pData).then(() => { alert("تم الحفظ بنجاح"); location.reload(); });
+        if(id) {
+            update(ref(db, 'projects_vFinal/' + id), pData).then(() => { alert("تم التحديث ✅"); resetForm(); });
+        } else {
+            push(r, pData).then(() => { resetForm(); });
+        }
     };
 
-    // الحذف
+    window.editProject = function(id, data) {
+        document.getElementById('editId').value = id;
+        document.getElementById('n').value = data.name;
+        document.getElementById('c').value = data.c;
+        document.getElementById('tot').value = data.tot;
+        document.getElementById('paid').value = data.paid;
+        document.getElementById('prog_m').value = data.prog_m;
+        document.getElementById('z_o').value = data.z_o;
+        document.getElementById('z_p').value = data.z_p;
+        document.getElementById('z_d').value = data.z_d;
+        document.getElementById('p_wea').value = data.p_wea;
+        document.getElementById('p_con').value = data.p_con;
+        document.getElementById('note').value = data.note;
+        document.getElementById('saveBtn').innerText = "تحديث البيانات 🔄";
+        document.getElementById('saveBtn').className = "btn btn-warning w-100 fw-bold";
+        document.getElementById('cancelBtn').classList.remove('d-none');
+        window.scrollTo(0,0);
+    };
+
+    window.resetForm = function() {
+        document.getElementById('editId').value = "";
+        document.querySelectorAll('input, textarea').forEach(el => el.value = el.defaultValue || "");
+        document.getElementById('saveBtn').innerText = "💾 حفظ";
+        document.getElementById('saveBtn').className = "btn btn-primary w-100 fw-bold";
+        document.getElementById('cancelBtn').classList.add('d-none');
+    };
+
     window.del = function(k) {
-        if(confirm("حذف المشروع؟")) remove(ref(db, 'projects_v4/' + k));
+        if (prompt("كلمة السر للحذف:") === "1234") remove(ref(db, 'projects_vFinal/' + k));
     };
 </script>
 </body>
